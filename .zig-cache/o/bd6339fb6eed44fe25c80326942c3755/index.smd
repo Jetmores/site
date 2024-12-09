@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>主页</h1>
+	<div id="content"><h2>C/C++</h2><ul><li><a href="/blog/c/">c</a></li><li><a href="/blog/cpp/">c++</a></li><li><a href="/blog/primer/">C++ Primer</a></li><li><a href="/blog/algo/">算法1</a></li><li><a href="/blog/algo2/">算法2</a></li><li><a href="/blog/design/">设计模式</a></li></ul><h2>操作系统</h2><ul><li>Linux通用<ul><li><a href="/blog/bash/">shell</a><ul><li><a href="/blog/head/">POSIX系统API__</a></li><li><a href="/blog/head/">计算机网络与socket编程__</a></li></ul></li></ul></li><li><a href="/blog/head/">Debian__</a></li><li><a href="/blog/head/">FreeBSD__</a></li></ul><h2>数据库</h2><ul><li><a href="/blog/mysql/">mysql</a></li><li><a href="/blog/postgres/">postgres</a></li><li><a href="/blog/redis/">redis</a></li></ul><h2>容器和常用容器</h2><ul><li><a href="/blog/docker/">docker</a></li><li><a href="/blog/nginx/">nginx</a></li></ul><h2>常用库</h2><ul><li><a href="/blog/libev/">libev</a></li><li><a href="/blog/libevent/">libevent</a></li><li><a href="/blog/grpc/">grpc</a></li><li><a href="/blog/quickfix/">quickfix</a></li></ul><h2>常用工具</h2><ul><li><a href="/blog/net/">WireShark</a></li><li><a href="/blog/head/">Makefile__</a></li><li><a href="/blog/head/">cmake__</a></li></ul><h2>其它语言</h2><ul><li><a href="/blog/asm/">asm</a></li><li><a href="/blog/zig/">zig</a></li><li><a href="/blog/zigLearn/">zigLearn</a></li><li><a href="/blog/rust/">rust</a></li></ul><p>此处是注释内容</p>
+<!--
+-->
+</div>
+</body>
+</html>

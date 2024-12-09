@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>算法2</h1>
+	<div id="content"><h3>回溯</h3><p>回溯的力量让我们能够重新开始,不断尝试,最终找到通往光明的出口.<br>回溯算法在尝试和回退中穷举所有可能的解,并通过剪枝避免不必要的搜索分支.<br>回溯算法通常采用”深度优先搜索”来遍历解空间</p><ol><li><p>全排列问题:暂略</p></li><li><p>子集和问题:暂略</p></li><li><p>N皇后问题</p></li></ol><pre><code class="cpp"><span class="comment">//根据国际象棋的规则,皇后可以攻击与同处一行,一列或一条斜线上的棋子.给定n个皇后和一个n*n大小的棋盘,寻找使得所有皇后之间无法相互攻击的摆放方案.</span>
+<span class="comment">/* 回溯算法：N 皇后 */</span>
+<span class="type">void</span> <span class="function">backtrack</span>(<span class="type">int</span> <span class="variable">row</span>, <span class="type">int</span> <span class="variable">n</span>, <span class="type">vector</span><span class="operator">&lt;</span><span class="type">vector</span><span class="operator">&lt;</span><span class="type">string</span><span class="operator">&gt;</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">state</span>, <span class="type">vector</span><span class="operator">&lt;</span><span class="type">vector</span><span class="operator">&lt;</span><span class="type">vector</span><span class="operator">&lt;</span><span class="type">string</span><span class="operator">&gt;</span><span class="operator">&gt;</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">res</span>, <span class="type">vector</span><span class="operator">&lt;</span><span class="type">bool</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">cols</span>,
+               <span class="type">vector</span><span class="operator">&lt;</span><span class="type">bool</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">diags1</span>, <span class="type">vector</span><span class="operator">&lt;</span><span class="type">bool</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">diags2</span>) {
+    <span class="comment">// 当放置完所有行时，记录解</span>
+    <span class="keyword">if</span> (<span class="variable">row</span> <span class="operator">==</span> <span class="variable">n</span>) {
+        <span class="variable">res</span><span class="delimiter">.</span><span class="function">push_back</span>(<span class="variable">state</span>)<span class="delimiter">;</span>
+        <span class="keyword">return</span><span class="delimiter">;</span>
+    }
+    <span class="comment">// 遍历所有列</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">col</span> <span class="operator">=</span> <span class="number">0</span><span class="delimiter">;</span> <span class="variable">col</span> <span class="operator">&lt;</span> <span class="variable">n</span><span class="delimiter">;</span> <span class="variable">col</span><span class="operator">++</span>) {
+        <span class="comment">// 计算该格子对应的主对角线和副对角线</span>
+        <span class="type">int</span> <span class="variable">diag1</span> <span class="operator">=</span> <span class="variable">row</span> <span class="operator">-</span> <span class="variable">col</span> <span class="operator">+</span> <span class="variable">n</span> <span class="operator">-</span> <span class="number">1</span><span class="delimiter">;</span>
+        <span class="type">int</span> <span class="variable">diag2</span> <span class="operator">=</span> <span class="variable">row</span> <span class="operator">+</span> <span class="variable">col</span><span class="delimiter">;</span>
+        <span class="comment">// 剪枝：不允许该格子所在列、主对角线、副对角线上存在皇后</span>
+        <span class="keyword">if</span> (!<span class="variable">cols</span>[<span class="variable">col</span>] <span class="operator">&amp;&amp;</span> !<span class="variable">diags1</span>[<span class="variable">diag1</span>] <span class="operator">&amp;&amp;</span> !<span class="variable">diags2</span>[<span class="variable">diag2</span>]) {
+            <span class="comment">// 尝试：将皇后放置在该格子</span>
+            <span class="variable">state</span>[<span class="variable">row</span>][<span class="variable">col</span>] <span class="operator">=</span> <span class="string">&quot;Q&quot;</span><span class="delimiter">;</span>
+            <span class="variable">cols</span>[<span class="variable">col</span>] <span class="operator">=</span> <span class="variable">diags1</span>[<span class="variable">diag1</span>] <span class="operator">=</span> <span class="variable">diags2</span>[<span class="variable">diag2</span>] <span class="operator">=</span> true<span class="delimiter">;</span>
+            <span class="comment">// 放置下一行</span>
+            <span class="function">backtrack</span>(<span class="variable">row</span> <span class="operator">+</span> <span class="number">1</span>, <span class="variable">n</span>, <span class="variable">state</span>, <span class="variable">res</span>, <span class="variable">cols</span>, <span class="variable">diags1</span>, <span class="variable">diags2</span>)<span class="delimiter">;</span>
+            <span class="comment">// 回退：将该格子恢复为空位</span>
+            <span class="variable">state</span>[<span class="variable">row</span>][<span class="variable">col</span>] <span class="operator">=</span> <span class="string">&quot;#&quot;</span><span class="delimiter">;</span>
+            <span class="variable">cols</span>[<span class="variable">col</span>] <span class="operator">=</span> <span class="variable">diags1</span>[<span class="variable">diag1</span>] <span class="operator">=</span> <span class="variable">diags2</span>[<span class="variable">diag2</span>] <span class="operator">=</span> false<span class="delimiter">;</span>
+        }
+    }
+}
+
+<span class="comment">/* 求解 N 皇后 */</span>
+<span class="type">vector</span><span class="operator">&lt;</span><span class="type">vector</span><span class="operator">&lt;</span><span class="type">vector</span><span class="operator">&lt;</span><span class="type">string</span><span class="operator">&gt;</span><span class="operator">&gt;</span><span class="operator">&gt;</span> <span class="function">nQueens</span>(<span class="type">int</span> <span class="variable">n</span>) {
+    <span class="comment">// 初始化 n*n 大小的棋盘，其中 &apos;Q&apos; 代表皇后，&apos;#&apos; 代表空位</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">vector</span><span class="operator">&lt;</span><span class="type">string</span><span class="operator">&gt;</span><span class="operator">&gt;</span> <span class="variable">state</span>(<span class="variable">n</span>, <span class="function">vector</span><span class="operator">&lt;</span><span class="type">string</span><span class="operator">&gt;</span>(<span class="variable">n</span>, <span class="string">&quot;#&quot;</span>))<span class="delimiter">;</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">bool</span><span class="operator">&gt;</span> <span class="function">cols</span>(<span class="type">n</span>, <span class="type">false</span>)<span class="delimiter">;</span>           <span class="comment">// 记录列是否有皇后</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">bool</span><span class="operator">&gt;</span> <span class="variable">diags1</span>(<span class="number">2</span> <span class="operator">*</span> <span class="variable">n</span> <span class="operator">-</span> <span class="number">1</span>, false)<span class="delimiter">;</span> <span class="comment">// 记录主对角线上是否有皇后</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">bool</span><span class="operator">&gt;</span> <span class="variable">diags2</span>(<span class="number">2</span> <span class="operator">*</span> <span class="variable">n</span> <span class="operator">-</span> <span class="number">1</span>, false)<span class="delimiter">;</span> <span class="comment">// 记录副对角线上是否有皇后</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">vector</span><span class="operator">&lt;</span><span class="type">vector</span><span class="operator">&lt;</span><span class="type">string</span><span class="operator">&gt;</span><span class="operator">&gt;</span><span class="operator">&gt;</span> <span class="variable">res</span><span class="delimiter">;</span>
+
+    <span class="function">backtrack</span>(<span class="number">0</span>, <span class="variable">n</span>, <span class="variable">state</span>, <span class="variable">res</span>, <span class="variable">cols</span>, <span class="variable">diags1</span>, <span class="variable">diags2</span>)<span class="delimiter">;</span>
+
+    <span class="keyword">return</span> <span class="variable">res</span><span class="delimiter">;</span>
+}
+</code></pre>
+<h3>动态规划</h3><p>动态规划也对问题进行递归分解,但与分治算法的主要区别是,动态规划中的子问题是相互依赖的,在分解过程中会出现许多重叠子问题;<br>动态规划常用来求解最优化问题,特性:</p><ul><li>重叠子问题</li><li>最优子结构:</li><li>无后效性:</li></ul><ol><li>初探:状态转移方程</li></ol><pre><code class="cpp"><span class="comment">//给定一个共有n阶的楼梯，你每步可以上1阶或者2阶,请问有多少种方案可以爬到楼顶?</span>
+<span class="comment">/* 爬楼梯：动态规划 */</span>
+<span class="type">int</span> <span class="function">climbingStairsDP</span>(<span class="type">int</span> <span class="variable">n</span>) {
+    <span class="keyword">if</span> (<span class="variable">n</span> <span class="operator">==</span> <span class="number">1</span> <span class="operator">||</span> <span class="variable">n</span> <span class="operator">==</span> <span class="number">2</span>)
+        <span class="keyword">return</span> <span class="variable">n</span><span class="delimiter">;</span>
+    <span class="comment">// 初始化 dp 表，用于存储子问题的解</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="variable">dp</span>(<span class="variable">n</span> <span class="operator">+</span> <span class="number">1</span>)<span class="delimiter">;</span>
+    <span class="comment">// 初始状态：预设最小子问题的解</span>
+    <span class="variable">dp</span>[<span class="number">1</span>] <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span>
+    <span class="variable">dp</span>[<span class="number">2</span>] <span class="operator">=</span> <span class="number">2</span><span class="delimiter">;</span>
+    <span class="comment">// 状态转移：从较小子问题逐步求解较大子问题</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">3</span><span class="delimiter">;</span> <span class="variable">i</span> &lt;= <span class="variable">n</span><span class="delimiter">;</span> <span class="variable">i</span><span class="operator">++</span>) {
+        <span class="variable">dp</span>[<span class="variable">i</span>] <span class="operator">=</span> <span class="variable">dp</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">1</span>] <span class="operator">+</span> <span class="variable">dp</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">2</span>]<span class="delimiter">;</span><span class="comment">//状态转移方程</span>
+    }
+    <span class="keyword">return</span> <span class="variable">dp</span>[<span class="variable">n</span>]<span class="delimiter">;</span>
+}
+
+<span class="comment">/* 爬楼梯：空间优化后的动态规划 */</span>
+<span class="type">int</span> <span class="function">climbingStairsDPComp</span>(<span class="type">int</span> <span class="variable">n</span>) {
+    <span class="keyword">if</span> (<span class="variable">n</span> <span class="operator">==</span> <span class="number">1</span> <span class="operator">||</span> <span class="variable">n</span> <span class="operator">==</span> <span class="number">2</span>)
+        <span class="keyword">return</span> <span class="variable">n</span><span class="delimiter">;</span>
+    <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>, <span class="variable">b</span> <span class="operator">=</span> <span class="number">2</span><span class="delimiter">;</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">3</span><span class="delimiter">;</span> <span class="variable">i</span> &lt;= <span class="variable">n</span><span class="delimiter">;</span> <span class="variable">i</span><span class="operator">++</span>) {
+        <span class="type">int</span> <span class="variable">tmp</span> <span class="operator">=</span> <span class="variable">b</span><span class="delimiter">;</span>
+        <span class="variable">b</span> <span class="operator">=</span> <span class="variable">a</span> <span class="operator">+</span> <span class="variable">b</span><span class="delimiter">;</span>
+        <span class="variable">a</span> <span class="operator">=</span> <span class="variable">tmp</span><span class="delimiter">;</span>
+    }
+    <span class="keyword">return</span> <span class="variable">b</span><span class="delimiter">;</span>
+}
+</code></pre>
+<ol><li>0-1背包问题</li></ol><pre><code class="cpp"><span class="comment">//给定n个物品,第i个物品的重量为wgt[i],价值为val[i],和一个容量为cap的背包.每个物品只能选择一次,问在限定背包容量下能放入物品的最大价值</span>
+<span class="comment">/* 0-1 背包：空间优化后的动态规划 */</span>
+<span class="type">int</span> <span class="function">knapsackDPComp</span>(<span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">wgt</span>, <span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">val</span>, <span class="type">int</span> <span class="variable">cap</span>) {
+    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> <span class="variable">wgt</span><span class="delimiter">.</span><span class="function">size</span>()<span class="delimiter">;</span>
+    <span class="comment">// 初始化 dp 表</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="variable">dp</span>(<span class="variable">cap</span> <span class="operator">+</span> <span class="number">1</span>, <span class="number">0</span>)<span class="delimiter">;</span>
+    <span class="comment">// 状态转移</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span><span class="delimiter">;</span> <span class="variable">i</span> <span class="operator">&lt;</span> <span class="variable">n</span><span class="delimiter">;</span> <span class="variable">i</span><span class="operator">++</span>) {
+        <span class="comment">// 倒序遍历</span>
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> <span class="variable">cap</span><span class="delimiter">;</span> <span class="variable">c</span> &gt;= <span class="number">1</span><span class="delimiter">;</span> <span class="variable">c</span><span class="operator">--</span>) {
+            <span class="keyword">if</span> (<span class="variable">wgt</span>[<span class="variable">i</span>] &lt;= <span class="variable">c</span>) {
+                <span class="comment">// 不选和选物品 i 这两种方案的较大值</span>
+                <span class="variable">dp</span>[<span class="variable">c</span>] <span class="operator">=</span> <span class="function">max</span>(<span class="variable">dp</span>[<span class="variable">c</span>], <span class="variable">dp</span>[<span class="variable">c</span> <span class="operator">-</span> <span class="variable">wgt</span>[<span class="variable">i</span>]] <span class="operator">+</span> <span class="variable">val</span>[<span class="variable">i</span>])<span class="delimiter">;</span>
+            }
+        }
+    }
+    <span class="keyword">return</span> <span class="variable">dp</span>[<span class="variable">cap</span>]<span class="delimiter">;</span>
+}
+</code></pre>
+<ol><li>完全背包:(特例零钱兑换)物品可重复选取,不再仅1次或0次</li></ol><pre><code class="cpp"><span class="comment">//给定n个物品,第i个物品的重量为wgt[i-1],价值为val[i-1],和一个容量为cap的背包.每个物品可以重复选取,问在限定背包容量下能放入物品的最大价值.</span>
+<span class="comment">/* 完全背包：空间优化后的动态规划 */</span>
+<span class="type">int</span> <span class="function">unboundedKnapsackDPComp</span>(<span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">wgt</span>, <span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">val</span>, <span class="type">int</span> <span class="variable">cap</span>) {
+    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> <span class="variable">wgt</span><span class="delimiter">.</span><span class="function">size</span>()<span class="delimiter">;</span>
+    <span class="comment">// 初始化 dp 表</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="variable">dp</span>(<span class="variable">cap</span> <span class="operator">+</span> <span class="number">1</span>, <span class="number">0</span>)<span class="delimiter">;</span>
+    <span class="comment">// 状态转移</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span> <span class="variable">i</span> &lt;= <span class="variable">n</span><span class="delimiter">;</span> <span class="variable">i</span><span class="operator">++</span>) {
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span> <span class="variable">c</span> &lt;= <span class="variable">cap</span><span class="delimiter">;</span> <span class="variable">c</span><span class="operator">++</span>) {
+            <span class="keyword">if</span> (<span class="variable">wgt</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">1</span>] <span class="operator">&gt;</span> <span class="variable">c</span>) {
+                <span class="comment">// 若超过背包容量，则不选物品 i</span>
+                <span class="variable">dp</span>[<span class="variable">c</span>] <span class="operator">=</span> <span class="variable">dp</span>[<span class="variable">c</span>]<span class="delimiter">;</span>
+            } <span class="keyword">else</span> {
+                <span class="comment">// 不选和选物品 i 这两种方案的较大值</span>
+                <span class="variable">dp</span>[<span class="variable">c</span>] <span class="operator">=</span> <span class="function">max</span>(<span class="variable">dp</span>[<span class="variable">c</span>], <span class="variable">dp</span>[<span class="variable">c</span> <span class="operator">-</span> <span class="variable">wgt</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">1</span>]] <span class="operator">+</span> <span class="variable">val</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">1</span>])<span class="delimiter">;</span>
+            }
+        }
+    }
+    <span class="keyword">return</span> <span class="variable">dp</span>[<span class="variable">cap</span>]<span class="delimiter">;</span>
+}
+
+<span class="comment">//给定n中硬币,第i中硬币的面值为coins[i-1],目标金额为amt,每种硬币可以重复选取,问能否凑出目标金额的最少硬币数量.如果无法凑出目标金额,则返回-1.</span>
+<span class="comment">/* 零钱兑换：空间优化后的动态规划 */</span>
+<span class="type">int</span> <span class="function">coinChangeDPComp</span>(<span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">coins</span>, <span class="type">int</span> <span class="variable">amt</span>) {
+    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> <span class="variable">coins</span><span class="delimiter">.</span><span class="function">size</span>()<span class="delimiter">;</span>
+    <span class="type">int</span> <span class="variable">MAX</span> <span class="operator">=</span> <span class="variable">amt</span> <span class="operator">+</span> <span class="number">1</span><span class="delimiter">;</span>
+    <span class="comment">// 初始化 dp 表</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="variable">dp</span>(<span class="variable">amt</span> <span class="operator">+</span> <span class="number">1</span>, <span class="variable">MAX</span>)<span class="delimiter">;</span>
+    <span class="variable">dp</span>[<span class="number">0</span>] <span class="operator">=</span> <span class="number">0</span><span class="delimiter">;</span>
+    <span class="comment">// 状态转移</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span> <span class="variable">i</span> &lt;= <span class="variable">n</span><span class="delimiter">;</span> <span class="variable">i</span><span class="operator">++</span>) {
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span> <span class="variable">a</span> &lt;= <span class="variable">amt</span><span class="delimiter">;</span> <span class="variable">a</span><span class="operator">++</span>) {
+            <span class="keyword">if</span> (<span class="variable">coins</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">1</span>] <span class="operator">&gt;</span> <span class="variable">a</span>) {
+                <span class="comment">// 若超过目标金额，则不选硬币 i</span>
+                <span class="variable">dp</span>[<span class="variable">a</span>] <span class="operator">=</span> <span class="variable">dp</span>[<span class="variable">a</span>]<span class="delimiter">;</span>
+            } <span class="keyword">else</span> {
+                <span class="comment">// 不选和选硬币 i 这两种方案的较小值</span>
+                <span class="variable">dp</span>[<span class="variable">a</span>] <span class="operator">=</span> <span class="function">min</span>(<span class="variable">dp</span>[<span class="variable">a</span>], <span class="variable">dp</span>[<span class="variable">a</span> <span class="operator">-</span> <span class="variable">coins</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">1</span>]] <span class="operator">+</span> <span class="number">1</span>)<span class="delimiter">;</span>
+            }
+        }
+    }
+    <span class="keyword">return</span> <span class="variable">dp</span>[<span class="variable">amt</span>] <span class="operator">!=</span> <span class="variable">MAX</span> ? <span class="variable">dp</span>[<span class="variable">amt</span>] : <span class="number">-1</span><span class="delimiter">;</span>
+}
+
+<span class="comment">//给定n中硬币,第i中硬币的面值为coins[i-1],目标金额为amt,每种硬币可以重复选取,问凑出目标金额的硬币组合数量.</span>
+<span class="comment">/* 零钱兑换 II：空间优化后的动态规划 */</span>
+<span class="type">int</span> <span class="function">coinChangeIIDPComp</span>(<span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">coins</span>, <span class="type">int</span> <span class="variable">amt</span>) {
+    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> <span class="variable">coins</span><span class="delimiter">.</span><span class="function">size</span>()<span class="delimiter">;</span>
+    <span class="comment">// 初始化 dp 表</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="variable">dp</span>(<span class="variable">amt</span> <span class="operator">+</span> <span class="number">1</span>, <span class="number">0</span>)<span class="delimiter">;</span>
+    <span class="variable">dp</span>[<span class="number">0</span>] <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span>
+    <span class="comment">// 状态转移</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span> <span class="variable">i</span> &lt;= <span class="variable">n</span><span class="delimiter">;</span> <span class="variable">i</span><span class="operator">++</span>) {
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span> <span class="variable">a</span> &lt;= <span class="variable">amt</span><span class="delimiter">;</span> <span class="variable">a</span><span class="operator">++</span>) {
+            <span class="keyword">if</span> (<span class="variable">coins</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">1</span>] <span class="operator">&gt;</span> <span class="variable">a</span>) {
+                <span class="comment">// 若超过目标金额，则不选硬币 i</span>
+                <span class="variable">dp</span>[<span class="variable">a</span>] <span class="operator">=</span> <span class="variable">dp</span>[<span class="variable">a</span>]<span class="delimiter">;</span>
+            } <span class="keyword">else</span> {
+                <span class="comment">// 不选和选硬币 i 这两种方案之和</span>
+                <span class="variable">dp</span>[<span class="variable">a</span>] <span class="operator">=</span> <span class="variable">dp</span>[<span class="variable">a</span>] <span class="operator">+</span> <span class="variable">dp</span>[<span class="variable">a</span> <span class="operator">-</span> <span class="variable">coins</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">1</span>]]<span class="delimiter">;</span>
+            }
+        }
+    }
+    <span class="keyword">return</span> <span class="variable">dp</span>[<span class="variable">amt</span>]<span class="delimiter">;</span>
+}
+</code></pre>
+<ol><li>编辑距离问题</li></ol><pre><code class="cpp"><span class="comment">//输入两个字符串s和t,返回将s转换为t所需的最少编辑步数.你可以在一个字符串中进行三种编辑操作:插入一个字符,删除一个字符,将字符替换为任意一个字符.</span>
+<span class="comment">/* 编辑距离：空间优化后的动态规划 */</span>
+<span class="type">int</span> <span class="function">editDistanceDPComp</span>(<span class="type">string</span> <span class="variable">s</span>, <span class="type">string</span> <span class="variable">t</span>) {
+    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> <span class="variable">s</span><span class="delimiter">.</span><span class="function">length</span>(), <span class="variable">m</span> <span class="operator">=</span> <span class="variable">t</span><span class="delimiter">.</span><span class="function">length</span>()<span class="delimiter">;</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="variable">dp</span>(<span class="variable">m</span> <span class="operator">+</span> <span class="number">1</span>, <span class="number">0</span>)<span class="delimiter">;</span>
+    <span class="comment">// 状态转移：首行</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span> <span class="variable">j</span> &lt;= <span class="variable">m</span><span class="delimiter">;</span> <span class="variable">j</span><span class="operator">++</span>) {
+        <span class="variable">dp</span>[<span class="variable">j</span>] <span class="operator">=</span> <span class="variable">j</span><span class="delimiter">;</span>
+    }
+    <span class="comment">// 状态转移：其余行</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span> <span class="variable">i</span> &lt;= <span class="variable">n</span><span class="delimiter">;</span> <span class="variable">i</span><span class="operator">++</span>) {
+        <span class="comment">// 状态转移：首列</span>
+        <span class="type">int</span> <span class="variable">leftup</span> <span class="operator">=</span> <span class="variable">dp</span>[<span class="number">0</span>]<span class="delimiter">;</span> <span class="comment">// 暂存 dp[i-1, j-1]</span>
+        <span class="variable">dp</span>[<span class="number">0</span>] <span class="operator">=</span> <span class="variable">i</span><span class="delimiter">;</span>
+        <span class="comment">// 状态转移：其余列</span>
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">1</span><span class="delimiter">;</span> <span class="variable">j</span> &lt;= <span class="variable">m</span><span class="delimiter">;</span> <span class="variable">j</span><span class="operator">++</span>) {
+            <span class="type">int</span> <span class="variable">temp</span> <span class="operator">=</span> <span class="variable">dp</span>[<span class="variable">j</span>]<span class="delimiter">;</span>
+            <span class="keyword">if</span> (<span class="variable">s</span>[<span class="variable">i</span> <span class="operator">-</span> <span class="number">1</span>] <span class="operator">==</span> <span class="variable">t</span>[<span class="variable">j</span> <span class="operator">-</span> <span class="number">1</span>]) {
+                <span class="comment">// 若两字符相等，则直接跳过此两字符</span>
+                <span class="variable">dp</span>[<span class="variable">j</span>] <span class="operator">=</span> <span class="variable">leftup</span><span class="delimiter">;</span>
+            } <span class="keyword">else</span> {
+                <span class="comment">// 最少编辑步数 = 插入、删除、替换这三种操作的最少编辑步数 + 1</span>
+                <span class="variable">dp</span>[<span class="variable">j</span>] <span class="operator">=</span> <span class="function">min</span>(<span class="function">min</span>(<span class="variable">dp</span>[<span class="variable">j</span> <span class="operator">-</span> <span class="number">1</span>], <span class="variable">dp</span>[<span class="variable">j</span>]), <span class="variable">leftup</span>) <span class="operator">+</span> <span class="number">1</span><span class="delimiter">;</span>
+            }
+            <span class="variable">leftup</span> <span class="operator">=</span> <span class="variable">temp</span><span class="delimiter">;</span> <span class="comment">// 更新为下一轮的 dp[i-1, j-1]</span>
+        }
+    }
+    <span class="keyword">return</span> <span class="variable">dp</span>[<span class="variable">m</span>]<span class="delimiter">;</span>
+}
+</code></pre>
+<h3>贪心算法:值得一试的捷径,有点魏延子午谷奇谋的意思</h3><p>贪心地做出局部最优的决策,以期获得全局最优解(近似算法捷径);不同于动态规划会根据之前阶段的所有决策来考虑当前决策(用过去子问题解构建当前子问题的解)<br>正确条件:每一步的最优解一定包含上一步的最优解</p><ol><li>零钱兑换：贪心 (精心设计的钱币对贪心算法有适配,否则动态规划才能达到最优)</li></ol><pre><code class="c"><span class="comment">/* 零钱兑换：贪心 */</span>
+<span class="type">int</span> <span class="function">coinChangeGreedy</span>(<span class="type">int</span> <span class="operator">*</span><span class="variable">coins</span>, <span class="type">int</span> <span class="variable">size</span>, <span class="type">int</span> <span class="variable">amt</span>) {
+    <span class="comment">// 假设 coins 列表有序</span>
+    <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="variable">size</span> <span class="operator">-</span> <span class="number">1</span><span class="delimiter">;</span>
+    <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span><span class="delimiter">;</span>
+    <span class="comment">// 循环进行贪心选择，直到无剩余金额</span>
+    <span class="keyword">while</span> (<span class="variable">amt</span> <span class="operator">&gt;</span> <span class="number">0</span>) {
+        <span class="comment">// 找到小于且最接近剩余金额的硬币</span>
+        <span class="keyword">while</span> (<span class="variable">i</span> <span class="operator">&gt;</span> <span class="number">0</span> <span class="operator">&amp;&amp;</span> <span class="variable">coins</span>[<span class="variable">i</span>] <span class="operator">&gt;</span> <span class="variable">amt</span>) {
+            <span class="variable">i</span><span class="operator">--</span><span class="delimiter">;</span>
+        }
+        <span class="comment">// 选择 coins[i]</span>
+        <span class="variable">amt</span> <span class="operator">-=</span> <span class="variable">coins</span>[<span class="variable">i</span>]<span class="delimiter">;</span>
+        <span class="variable">count</span><span class="operator">++</span><span class="delimiter">;</span>
+    }
+    <span class="comment">// 若未找到可行方案，则返回 -1</span>
+    <span class="keyword">return</span> <span class="variable">amt</span> <span class="operator">==</span> <span class="number">0</span> ? <span class="variable">count</span> : <span class="number">-1</span><span class="delimiter">;</span>
+}
+</code></pre>
+<ol><li>分数背包问题</li></ol><pre><code class="cpp"><span class="comment">//给定n个物品,第i个物品的重量为wgt[i-1],价值为val[i-1],和一个容量为cap的背包.每个物品只能选择一次,但可以选择物品的一部分,价值根据选择的重量比例计算,问在限定背包容量下背包中物品的最大价值.</span>
+<span class="comment">/* 物品 */</span>
+<span class="keyword">class</span> <span class="type">Item</span> {
+  <span class="keyword">public</span>:
+    <span class="type">int</span> <span class="property">w</span><span class="delimiter">;</span> <span class="comment">// 物品重量</span>
+    <span class="type">int</span> <span class="property">v</span><span class="delimiter">;</span> <span class="comment">// 物品价值</span>
+
+    <span class="function">Item</span>(<span class="type">int</span> <span class="variable">w</span>, <span class="type">int</span> <span class="variable">v</span>) : <span class="property">w</span>(<span class="variable">w</span>), <span class="property">v</span>(<span class="variable">v</span>) {
+    }
+}<span class="delimiter">;</span>
+
+<span class="comment">/* 分数背包：贪心 */</span>
+<span class="type">double</span> <span class="function">fractionalKnapsack</span>(<span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">wgt</span>, <span class="type">vector</span><span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> <span class="operator">&amp;</span><span class="variable">val</span>, <span class="type">int</span> <span class="variable">cap</span>) {
+    <span class="comment">// 创建物品列表，包含两个属性：重量、价值</span>
+    <span class="type">vector</span><span class="operator">&lt;</span><span class="type">Item</span><span class="operator">&gt;</span> <span class="variable">items</span><span class="delimiter">;</span>
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span><span class="delimiter">;</span> <span class="variable">i</span> <span class="operator">&lt;</span> <span class="variable">wgt</span><span class="delimiter">.</span><span class="function">size</span>()<span class="delimiter">;</span> <span class="variable">i</span><span class="operator">++</span>) {
+        <span class="variable">items</span><span class="delimiter">.</span><span class="function">push_back</span>(<span class="function">Item</span>(<span class="variable">wgt</span>[<span class="variable">i</span>], <span class="variable">val</span>[<span class="variable">i</span>]))<span class="delimiter">;</span>
+    }
+    <span class="comment">// 按照单位价值 item.v / item.w 从高到低进行排序</span>
+    <span class="function">sort</span>(<span class="variable">items</span><span class="delimiter">.</span><span class="function">begin</span>(), <span class="variable">items</span><span class="delimiter">.</span><span class="function">end</span>(), [](<span class="type">Item</span> <span class="operator">&amp;</span><span class="variable">a</span>, <span class="type">Item</span> <span class="operator">&amp;</span><span class="variable">b</span>) { <span class="keyword">return</span> (<span class="type">double</span>)<span class="variable">a</span><span class="delimiter">.</span><span class="property">v</span> / <span class="variable">a</span><span class="delimiter">.</span><span class="property">w</span> <span class="operator">&gt;</span> (<span class="type">double</span>)<span class="variable">b</span><span class="delimiter">.</span><span class="property">v</span> / <span class="variable">b</span><span class="delimiter">.</span><span class="property">w</span><span class="delimiter">;</span> })<span class="delimiter">;</span>
+    <span class="comment">// 循环贪心选择</span>
+    <span class="type">double</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">0</span><span class="delimiter">;</span>
+    <span class="keyword">for</span> (<span class="type">auto</span> <span class="operator">&amp;</span><span class="variable">item</span> : <span class="variable">items</span>) {
+        <span class="keyword">if</span> (<span class="variable">item</span><span class="delimiter">.</span><span class="property">w</span> &lt;= <span class="variable">cap</span>) {
+            <span class="comment">// 若剩余容量充足，则将当前物品整个装进背包</span>
+            <span class="variable">res</span> <span class="operator">+=</span> <span class="variable">item</span><span class="delimiter">.</span><span class="property">v</span><span class="delimiter">;</span>
+            <span class="variable">cap</span> <span class="operator">-=</span> <span class="variable">item</span><span class="delimiter">.</span><span class="property">w</span><span class="delimiter">;</span>
+        } <span class="keyword">else</span> {
+            <span class="comment">// 若剩余容量不足，则将当前物品的一部分装进背包</span>
+            <span class="variable">res</span> <span class="operator">+=</span> (<span class="type">double</span>)<span class="variable">item</span><span class="delimiter">.</span><span class="property">v</span> / <span class="variable">item</span><span class="delimiter">.</span><span class="property">w</span> <span class="operator">*</span> <span class="variable">cap</span><span class="delimiter">;</span>
+            <span class="comment">// 已无剩余容量，因此跳出循环</span>
+            <span class="keyword">break</span><span class="delimiter">;</span>
+        }
+    }
+    <span class="keyword">return</span> <span class="variable">res</span><span class="delimiter">;</span>
+}
+</code></pre>
+<ol><li><p>最大容量问题<br>无法一眼看出</p></li><li><p>最大切分乘法问题<br>无法一眼看出</p></li></ol></div>
+</body>
+</html>

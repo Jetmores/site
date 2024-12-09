@@ -1,0 +1,54 @@
+---
+.title="主页",
+.date=@date("2024-11-22T00:00:00"),
+.author="let2rs",
+.layout="home.shtml",
+.draft=false,
+---
+## C/C++
+- [c]($link.page('blog/c'))
+- [c++]($link.page('blog/cpp'))
+- [C++ Primer]($link.page('blog/primer'))
+- [算法1]($link.page('blog/algo'))
+- [算法2]($link.page('blog/algo2'))
+- [设计模式]($link.page('blog/design'))
+
+## 操作系统
+- Linux通用
+  1. [shell]($link.page('blog/bash'))
+  2. [POSIX系统API__]($link.page('blog/head'))
+  3. [计算机网络与socket编程__]($link.page('blog/head'))
+- [Debian__]($link.page('blog/head'))
+- [FreeBSD__]($link.page('blog/head'))
+
+## 数据库
+- [mysql]($link.page('blog/mysql'))
+- [postgres]($link.page('blog/postgres'))
+- [redis]($link.page('blog/redis'))
+
+## 容器和常用容器
+- [docker]($link.page('blog/docker'))
+- [nginx]($link.page('blog/nginx'))
+
+## 常用库
+- [libev]($link.page('blog/libev'))
+- [libevent]($link.page('blog/libevent'))
+- [grpc]($link.page('blog/grpc'))
+- [quickfix]($link.page('blog/quickfix'))
+
+## 常用工具
+- [WireShark]($link.page('blog/net'))
+- [Makefile__]($link.page('blog/head'))
+- [cmake__]($link.page('blog/head'))
+
+## 其它语言
+- [asm]($link.page('blog/asm'))
+- [zig]($link.page('blog/zig'))
+- [zigLearn]($link.page('blog/zigLearn'))
+- [rust]($link.page('blog/rust'))
+
+```=html
+<p>此处是注释内容</p>
+<!--
+-->
+```

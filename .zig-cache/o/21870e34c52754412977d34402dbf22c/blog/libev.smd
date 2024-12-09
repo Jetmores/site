@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>libev</h1>
+	<div id="content"><h3>libev本地调试操作<a href="https://gitlab.com/lets2rs/libev" target="_blank">https://gitlab.com/lets2rs/libev</a></h3><ol><li>依赖command:autoconf,automake,libtool,make,gcc/clang</li><li>sh autogen.sh</li><li>./configure</li><li>make && make install</li><li>删除ev.c和ev.h不依赖的文件</li><li>添加自己的main函数,进行编译调试</li></ol><h3>通用接口</h3><ol><li>[epoll|poll|select]_init</li><li>[epoll|poll|select]_destory</li><li>[epoll|poll|select]_modify</li><li>[epoll|poll|select]_poll</li></ol><h3>事件注册</h3><ol><li>ev_[io|timer|signal]_init</li><li>ev_[io|timer|signal]_start</li></ol><h3>事件循环</h3><ol><li>ev_loop_new(0):初始化</li><li>ev_run(loop,0):启动事件循环</li></ol></div>
+</body>
+</html>

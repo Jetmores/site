@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+	<title>Blog for myself</title>
+  </head>
+  <body>
+    <h1>Blogpage</h1>
+	<div><p>Your <strong>Blog</strong> content goes here.</p></div>
+  </body>
+</html>

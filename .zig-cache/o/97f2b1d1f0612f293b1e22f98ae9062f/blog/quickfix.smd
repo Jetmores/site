@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>quickfix</h1>
+	<div id="content"><h3>典型应用</h3><pre><code class="cpp">    <span class="type">Application</span> <span class="variable">application</span><span class="delimiter">;</span>
+    <span class="type">FIX</span>::<span class="type">FileStoreFactory</span> <span class="function">storeFactory</span>( <span class="type">settings</span> )<span class="delimiter">;</span>
+    <span class="type">FIX</span>::<span class="type">ScreenLogFactory</span> <span class="function">logFactory</span>( <span class="type">settings</span> )<span class="delimiter">;</span>
+    <span class="variable">initiator</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="type">FIX</span>::<span class="type">SocketInitiator</span>( <span class="variable">application</span>, <span class="variable">storeFactory</span>, <span class="variable">settings</span>, <span class="variable">logFactory</span> )<span class="delimiter">;</span>
+    <span class="variable">initiator</span><span class="operator">-&gt;</span><span class="function">start</span>()<span class="delimiter">;</span>
+    <span class="variable">application</span><span class="delimiter">.</span><span class="function">run</span>()<span class="delimiter">;</span>
+    <span class="variable">initiator</span><span class="operator">-&gt;</span><span class="function">stop</span>()<span class="delimiter">;</span>
+    <span class="keyword">delete</span> <span class="variable">initiator</span><span class="delimiter">;</span>
+</code></pre>
+<h3>源码分析</h3><ol><li>组成</li></ol><pre><code class="cpp"><span class="comment">//SessionSettings:读取配置文件,以不同SessionID为key组成map红黑树</span>
+<span class="keyword">class</span> <span class="type">SessionSettings</span>
+<span class="type">typedef</span> <span class="variable">std</span>::<span class="type">map</span> <span class="operator">&lt;</span> <span class="type">SessionID</span>, <span class="type">Dictionary</span> <span class="operator">&gt;</span> <span class="variable">Dictionaries</span><span class="delimiter">;</span>
+<span class="type">Dictionaries</span> <span class="variable">m_settings</span><span class="delimiter">;</span>
+
+<span class="keyword">class</span> <span class="type">SocketInitiator</span> : <span class="keyword">public</span> <span class="type">Initiator</span>, <span class="type">SocketConnector</span>::<span class="type">Strategy</span>
+<span class="variable">SocketInitiator</span>( <span class="variable">Application</span><span class="operator">&amp;</span>, <span class="type">MessageStoreFactory</span><span class="operator">&amp;</span>,<span class="type">const</span> <span class="variable">SessionSettings</span><span class="operator">&amp;</span>, <span class="type">LogFactory</span><span class="operator">&amp;</span> ) <span class="variable">EXCEPT</span> ( <span class="variable">ConfigError</span> )<span class="delimiter">;</span>
+
+<span class="comment">//其它</span>
+<span class="variable">DataDictionary</span><span class="delimiter">.</span><span class="property">cpp</span><span class="comment">//解析诸如FIX42.xml的数据字典</span>
+<span class="variable">Field</span><span class="delimiter">.</span><span class="property">cpp</span><span class="comment">//数据字典中解析预定义的field</span>
+<span class="variable">FieldMap</span><span class="delimiter">.</span><span class="property">cpp</span><span class="comment">//message的头-体-尾的基类</span>
+<span class="variable">Message</span><span class="delimiter">.</span><span class="property">cpp</span><span class="comment">//数据字典中解析处理message节点</span>
+<span class="variable">Http</span><span class="delimiter">.</span><span class="property">cpp</span><span class="comment">//实现http引擎的部分</span>
+<span class="variable">Socket</span><span class="delimiter">.</span><span class="property">cpp</span><span class="comment">//会话层的通信</span>
+<span class="variable">Session</span><span class="delimiter">.</span><span class="property">cpp</span><span class="comment">//会话层的东西</span><span class="delimiter"></span>
+</code></pre>
+<ol><li>新建线程</li></ol><pre><code class="cpp"><span class="variable">initiator</span><span class="operator">-&gt;</span><span class="function">start</span>()<span class="delimiter">;</span><span class="comment">//Initiator::start()//-&gt;</span>
+<span class="type">HttpServer</span>::<span class="function">startGlobal</span>( <span class="variable">m_settings</span> )<span class="delimiter">;</span><span class="comment">//HttpServer::start()//thread_spawn( &amp;startThread, this, m_threadid )//新线程</span>
+<span class="type">HttpServer</span>::<span class="function">onStart</span>()
+<span class="variable">m_pServer</span><span class="operator">-&gt;</span><span class="function">block</span>( <span class="operator">*</span><span class="variable builtin">this</span> )<span class="comment">//SocketServer::block//m_monitor.block( wrapper, poll, timeout );</span><span class="delimiter"></span>
+<span class="function">select</span>( <span class="variable">FD_SETSIZE</span>, <span class="operator">&amp;</span><span class="variable">readSet</span>, <span class="operator">&amp;</span><span class="variable">writeSet</span>, <span class="operator">&amp;</span><span class="variable">exceptSet</span>, <span class="function">getTimeval</span>(<span class="variable">poll</span>, <span class="variable">timeout</span>) )<span class="delimiter">;</span>
+<span class="function">processWriteSet</span>( <span class="variable">strategy</span>, <span class="variable">writeSet</span> )<span class="delimiter">;</span>
+<span class="function">processReadSet</span>( <span class="variable">strategy</span>, <span class="variable">readSet</span> )<span class="delimiter">;</span>
+
+<span class="function">thread_spawn</span>( <span class="operator">&amp;</span><span class="variable">startThread</span>, <span class="variable builtin">this</span>, <span class="variable">m_threadid</span> )<span class="comment">//Initiator::start()下的新线程,用于连接和处理连接上的读写事件,可以打onEvent的log</span><span class="delimiter"></span>
+<span class="type">SocketInitiator</span>::<span class="function">onStart</span>()<span class="delimiter"></span>
+<span class="type">Initiator</span>::<span class="function">connect</span>()<span class="delimiter"></span>
+<span class="type">SocketInitiator</span>::<span class="function">doConnect</span>( <span class="keyword">const</span> <span class="type">SessionID</span><span class="operator">&amp;</span> <span class="variable">s</span>, <span class="keyword">const</span> <span class="type">Dictionary</span><span class="operator">&amp;</span> <span class="variable">d</span> )
+<span class="variable">m_connector</span><span class="delimiter">.</span><span class="function">connect</span>( <span class="variable">address</span>, <span class="variable">port</span>, <span class="variable">m_noDelay</span>, <span class="variable">m_sendBufSize</span>, <span class="variable">m_rcvBufSize</span>, <span class="variable">sourceAddress</span>, <span class="variable">sourcePort</span> )<span class="delimiter">;</span>
+<span class="keyword">while</span> ( !<span class="function">isStopped</span>() ) {<span class="comment">//读写异常等的事件循环</span>
+  <span class="variable">m_connector</span><span class="delimiter">.</span><span class="function">block</span>( <span class="operator">*</span><span class="variable builtin">this</span>, false, <span class="number">1.0</span> )<span class="delimiter">;</span>
+  <span class="function">onTimeout</span>( <span class="variable">m_connector</span> )<span class="delimiter">;</span>
+}
+</code></pre>
+<ol><li>线程任务分布</li></ol><pre><code class="cpp"><span class="comment">///主线程1</span>
+<span class="comment">//35=D/F toApp</span>
+<span class="type">FIX</span>::<span class="type">Session</span>::<span class="type">sendToTarget</span>
+<span class="type">FIX</span>::<span class="type">Session</span>::<span class="type">sendRaw</span>
+<span class="variable">FIX</span>::<span class="type">Session</span>::<span class="type">send</span>
+<span class="variable">FIX</span>::<span class="type">SocketConnection</span>::<span class="type">send</span>
+<span class="variable">FIX</span>::<span class="type">SocketConnection</span>::<span class="variable">processQueue</span>
+
+
+<span class="comment">///httpServer线程2</span>
+<span class="variable">QuickFIX</span> <span class="variable">Engine</span> <span class="variable">Web</span> <span class="variable">Interface</span>  
+<span class="comment">//在运行或断点时curl 127.0.0.1:9909 可探测到;或用浏览器访问;</span>
+<span class="comment">//#注释HttpAcceptPort=9909,即可去掉此线程</span>
+
+<span class="comment">///收发线程3</span>
+<span class="comment">//35=A toAdmin</span>
+<span class="type">FIX</span>::<span class="type">Initiator</span>::<span class="type">startThread</span>
+<span class="variable">FIX</span>::<span class="type">SocketInitiator</span>::<span class="type">onStart</span>
+<span class="variable">FIX</span>::<span class="type">SocketConnector</span>::<span class="type">block</span>
+<span class="variable">FIX</span>::<span class="type">SocketMonitor</span>::<span class="type">block</span>
+<span class="variable">FIX</span>::<span class="type">SocketMonitor</span>::<span class="type">processWriteSet</span>
+<span class="variable">FIX</span>::<span class="type">SocketInitiator</span>::<span class="type">onConnect</span>
+<span class="variable">FIX</span>::<span class="type">SocketConnection</span>::<span class="type">onTimeout</span>
+<span class="variable">FIX</span>::<span class="type">Session</span>::<span class="type">next</span>
+<span class="variable">FIX</span>::<span class="type">Session</span>::<span class="type">generateLogon</span>
+<span class="variable">FIX</span>::<span class="type">Session</span>::<span class="type">sendRaw</span>
+<span class="variable">FIX</span>::<span class="type">Session</span>::<span class="type">send</span>
+<span class="variable">FIX</span>::<span class="type">SocketConnection</span>::<span class="type">send</span>
+<span class="variable">FIX</span>::<span class="type">SocketConnection</span>::<span class="type">processQueue</span>
+
+<span class="comment">//35=0 toAdmin</span>
+<span class="variable">FIX</span>::<span class="type">Session</span>::<span class="type">generateHeartbeat</span>
+
+<span class="comment">//35=5 toAdmin</span>
+<span class="variable">FIX</span>::<span class="type">Session</span>::<span class="type">generateLogout</span>
+
+
+<span class="comment">//35=8/9 fromApp</span>
+<span class="variable">FIX</span>::<span class="type">Initiator</span>::<span class="type">startThread</span>
+<span class="variable">FIX</span>::<span class="type">SocketInitiator</span>::<span class="type">onStart</span>
+<span class="variable">FIX</span>::<span class="type">SocketConnector</span>::<span class="type">block</span>
+<span class="variable">FIX</span>::<span class="type">SocketMonitor</span>::<span class="type">block</span>
+<span class="variable">FIX</span>::<span class="type">SocketMonitor</span>::<span class="type">processReadSet</span>
+<span class="variable">FIX</span>::<span class="type">ConnectorWrapper</span>::<span class="type">onEvent</span>
+<span class="variable">FIX</span>::<span class="type">SocketConnection</span>::<span class="type">read</span>
+<span class="variable">FIX</span>::<span class="type">SocketConnection</span>::<span class="type">readMessages</span>
+<span class="variable">FIX</span>::<span class="type">Session</span>::<span class="type">next</span>
+<span class="variable">FIX</span>::<span class="type">Session</span>::<span class="type">verify</span>
+<span class="type">Application</span>::<span class="type">fromApp</span>
+<span class="variable">FIX</span>::<span class="type">MessageCracker</span>::<span class="type">crack</span>
+<span class="variable">FIX42</span>::<span class="type">MessageCracker</span>::<span class="type">crack</span>
+<span class="type">Application</span>::<span class="variable">onMessage</span>
+
+</code></pre>
+</div>
+</body>
+</html>

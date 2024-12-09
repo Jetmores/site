@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>主页</h1>
+	<div id="content"><h2>C/C++</h2><ul><li><a href="/blog/c/">c</a></li><li><a href="/blog/cpp/">c++</a></li><li><a href="/blog/primer/">C++ Primer</a></li><li><a href="/blog/algo/">算法1</a></li><li><a href="/blog/algo2/">算法2</a></li><li><a href="/blog/design/">设计模式</a></li></ul><h2>操作系统</h2><ul><li>Linux通用<ul><li><a href="/blog/bash/">shell</a></li></ul></li></ul><p>write later</p>
+<!--
+	- [POSIX系统API]()
+	- [计算机网络与socket编程]()
+- [Debian]()
+- [FreeBSD]()
+
+## 数据库
+- [mysql]()
+- [postgres]()
+- [redis]()
+
+## 容器和常用容器
+- [docker]()
+- [nginx]()
+
+## 常用库
+- [libev]()
+- [libevent]()
+- [grpc]()
+- [quickfix]()
+
+## 常用工具
+- [WireShark]()
+- [Makefile]()
+- [cmake]()
+
+## 其它语言
+- [asm]()
+- [zig]()
+- [rust]()
+-->
+</div>
+</body>
+</html>

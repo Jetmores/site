@@ -1,0 +1,11 @@
+---
+.title="Blogpage",
+.date=@date("2024-11-22T00:00:00"),
+.author="let2rs",
+.layout="home.shtml",
+.draft=false,
+---
+### PS入门
+安装:https://www.bilibili.com/read/cv22987674/ (貌似需要迅雷下载)
+
+### SVG动图制作

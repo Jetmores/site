@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>redis</h1>
+	<div id="content"><h3>redis setting</h3><p>!docker run –name redis_ -p 6379:6379 -v /mnt/d/work/redis/redis/redis.conf:/etc/redis/redis.conf -v /mnt/d/work/re    dis/redis/data:/data -d redis:latest redis-server /etc/redis/redis.conf –appendonly yes</p><p>!docker exec -it redis_ /bin/bash</p><ol><li>/etc/redis/redis.conf</li></ol><pre><code class="bash"><span class="constant">bind</span> <span class="constant">0.0.0.0</span>
+<span class="constant">protected-mode</span> <span class="constant">yes</span>
+<span class="constant">daemonize</span> <span class="constant">yes</span>
+<span class="constant">requirepass</span> <span class="constant">123456</span>
+<span class="constant">appendonly</span> <span class="constant">yes</span>
+</code></pre>
+<ol><li>connect to</li></ol><pre><code class="bash"><span class="constant">redis-cli</span>
+<span class="constant">auth</span> <span class="constant">[default]</span> <span class="constant">123456</span>
+</code></pre>
+<ol><li>list all and cleanup all</li></ol><pre><code class="bash"><span class="constant">keys</span> <span class="constant">*</span>
+<span class="constant">flushall</span>
+</code></pre>
+<h3>redis usage</h3><pre><code class="bash"><span class="constant">DEL</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span>
+<span class="constant">EXISTS</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span>
+<span class="constant">EXPIRE</span> <span class="constant">key</span> <span class="constant">seconds</span> <span class="constant">[NX</span><span class="operator">|</span><span class="constant">XX</span><span class="operator">|</span><span class="constant">GT</span><span class="operator">|</span><span class="constant">LT]</span>
+<span class="constant">TTL</span> <span class="constant">key</span>
+</code></pre>
+<h4>type</h4><p>string list map(hash) set sorted-set</p><h4>string:int,float,string</h4><pre><code class="bash"><span class="constant">SET</span> <span class="constant">key</span> <span class="constant">value</span> <span class="constant">[NX]/[EX</span> <span class="constant">seconds]</span>
+<span class="constant">MSET</span> <span class="constant">key</span> <span class="constant">value</span> <span class="constant">[key</span> <span class="constant">value</span> <span class="constant">...]</span>
+<span class="constant">GET</span> <span class="constant">key</span>
+<span class="constant">MGET</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span>
+<span class="constant">INCR</span> <span class="constant">key</span> <span class="comment"># ++1</span>
+<span class="constant">INCRBY</span> <span class="constant">key</span> <span class="constant">increment</span> <span class="comment"># incrby xx 2 # incrby xx -1</span>
+<span class="constant">INCRBYFLOAT</span> <span class="constant">key</span> <span class="constant">increment</span> <span class="comment"># incrbyfloat xx 0.5</span>
+</code></pre>
+<h4>hash(map)</h4><pre><code class="bash"><span class="constant">HSET</span> <span class="constant">key</span> <span class="constant">field</span> <span class="constant">value</span> <span class="constant">[field</span> <span class="constant">value</span> <span class="constant">...]</span> <span class="comment">#hmset同,但被deprecated;且hash的超时仅可hset后expire key 10</span>
+<span class="constant">HSETNX</span> <span class="constant">key</span> <span class="constant">field</span> <span class="constant">value</span>
+<span class="constant">HDEL</span> <span class="constant">key</span> <span class="constant">field</span> <span class="constant">[field</span> <span class="constant">...]</span>
+<span class="constant">HGET</span> <span class="constant">key</span> <span class="constant">field</span>
+<span class="constant">HMGET</span> <span class="constant">key</span> <span class="constant">field</span> <span class="constant">[field</span> <span class="constant">...]</span>
+<span class="constant">HGETALL</span> <span class="constant">key</span>
+<span class="constant">HINCRBY</span> <span class="constant">key</span> <span class="constant">field</span> <span class="constant">increment</span>
+</code></pre>
+<h4>list</h4><ol><li>stack:入口与出口一致lpush-lpop或rpush-rpop</li><li>queue:入口出口不在一边lpush-rpop</li><li>阻塞队列:同2,但pop要用block版本如lpush-brpop</li></ol><pre><code class="bash"><span class="constant">L/RPUSH</span> <span class="constant">key</span> <span class="constant">element</span> <span class="constant">[element</span> <span class="constant">...]</span>
+<span class="constant">L/RPOP</span> <span class="constant">key</span> <span class="constant">[count]</span>
+<span class="constant">BL/RPOP</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span> <span class="constant">timeout</span> <span class="comment"># block and pop until timeout</span>
+<span class="constant">LRANGE</span> <span class="constant">key</span> <span class="constant">start</span> <span class="constant">stop</span>
+</code></pre>
+<h4>set(类似hashmap,但无key-value的value)</h4><pre><code class="bash"><span class="constant">SADD</span> <span class="constant">key</span> <span class="constant">member</span> <span class="constant">[member</span> <span class="constant">...]</span>
+<span class="constant">SREM</span> <span class="constant">key</span> <span class="constant">member</span> <span class="constant">[member</span> <span class="constant">...]</span>
+<span class="constant">SISMEMBER</span> <span class="constant">key</span> <span class="constant">member</span>
+<span class="constant">SMEMBERS</span> <span class="constant">key</span>
+<span class="constant">SCARD</span> <span class="constant">key</span>
+<span class="constant">SINTER</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span> <span class="comment">#A^B</span>
+<span class="constant">SUNION</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span> <span class="comment">#AvB</span>
+<span class="constant">SDIFF</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span> <span class="comment">#A-B</span>
+</code></pre>
+<h4>sorted-set(不是红黑树,是skiplist跳表+hash表)</h4><pre><code class="bash"><span class="constant">ZADD</span> <span class="constant">key</span> <span class="constant">[NX</span><span class="operator">|</span><span class="constant">XX]</span> <span class="constant">[GT</span><span class="operator">|</span><span class="constant">LT]</span> <span class="constant">[CH]</span> <span class="constant">[INCR]</span> <span class="constant">score</span> <span class="constant">member</span> <span class="constant">[score</span> <span class="constant">member</span> <span class="constant">...]</span>
+<span class="constant">ZREM</span> <span class="constant">key</span> <span class="constant">member</span> <span class="constant">[member</span> <span class="constant">...]</span>
+<span class="constant">ZSCORE</span> <span class="constant">key</span> <span class="constant">member</span>
+<span class="constant">ZINCRBY</span> <span class="constant">key</span> <span class="constant">increment</span> <span class="constant">member</span>
+<span class="constant">ZRANK</span> <span class="constant">key</span> <span class="constant">member</span>
+<span class="constant">ZCARD</span> <span class="constant">key</span>
+<span class="constant">ZCOUNT</span> <span class="constant">key</span> <span class="constant">min</span> <span class="constant">max</span>
+<span class="constant">ZRANGE</span> <span class="constant">key</span> <span class="constant">start</span> <span class="constant">stop</span> <span class="constant">[BYSCORE</span><span class="operator">|</span><span class="constant">BYLEX]</span> <span class="constant">[REV]</span> <span class="constant">[LIMIT</span> <span class="constant">offset</span> <span class="constant">count]</span> <span class="constant">[WITHSCORES]</span>
+<span class="constant">ZRANGEBYSCORE</span> <span class="constant">key</span> <span class="constant">min</span> <span class="constant">max</span> <span class="constant">[WITHSCORES]</span> <span class="constant">[LIMIT</span> <span class="constant">offset</span> <span class="constant">count]</span>
+<span class="constant">ZINTER</span> <span class="constant">numkeys</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span> <span class="constant">[WEIGHTS</span> <span class="constant">weight</span> <span class="constant">[weight</span> <span class="constant">...]]</span> <span class="constant">[AGGREGATE</span> <span class="constant">SUM</span><span class="operator">|</span><span class="constant">MIN</span><span class="operator">|</span><span class="constant">MAX]</span> <span class="constant">[WITHSCORES]</span>
+<span class="constant">ZUNION</span> <span class="constant">numkeys</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span> <span class="constant">[WEIGHTS</span> <span class="constant">weight</span> <span class="constant">[weight</span> <span class="constant">...]]</span> <span class="constant">[AGGREGATE</span> <span class="constant">SUM</span><span class="operator">|</span><span class="constant">MIN</span><span class="operator">|</span><span class="constant">MAX]</span> <span class="constant">[WITHSCORES]</span>
+<span class="constant">ZDIFF</span> <span class="constant">numkeys</span> <span class="constant">key</span> <span class="constant">[key</span> <span class="constant">...]</span> <span class="constant">[WITHSCORES]</span>
+</code></pre>
+<h3>redis与mysql如何保障数据一致性</h3><ol><li>实时一致性方案:先写mysql,再删redis</li><li>最终一致性方案:先写mysql,通过binlog,异步更新redis</li></ol></div>
+</body>
+</html>

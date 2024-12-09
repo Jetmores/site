@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">Blog for myself - Zine</title>
+	<link href="assets/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">博客</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>Blogpageindex</h1>
+	<div id="content"><p>Your <strong>BlogIndex</strong> content goes here.</p></div>
+</body>
+</html>

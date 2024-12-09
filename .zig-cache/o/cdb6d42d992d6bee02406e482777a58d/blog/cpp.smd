@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>c++</h1>
+	<div id="content"><h3>?嵌套类 ?nested</h3><pre><code class="cpp"><span class="type">int</span> <span class="variable">x</span>,<span class="variable">y</span><span class="delimiter">;</span> <span class="comment">// 全局变量</span>
+<span class="keyword">class</span> <span class="type">enclose</span> <span class="comment">// 外围类</span>
+{
+<span class="keyword">public</span>:
+    <span class="keyword">struct</span> <span class="type">inner</span> <span class="comment">// 嵌套类</span>
+    {
+        <span class="type">void</span> <span class="function">f</span>(<span class="type">int</span> <span class="variable">i</span>)
+        {
+            <span class="variable">x</span> <span class="operator">=</span> <span class="variable">i</span><span class="delimiter">;</span> <span class="comment">// 错误：不能不带实例地写入非静态的 enclose::x</span>
+            <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">sizeof</span> <span class="variable">x</span><span class="delimiter">;</span> <span class="comment">// C++11 前错误，C++11 中 OK：sizeof 的操作数不求值，</span>
+                              <span class="comment">// 可以这样使用非静态的 enclose::x 。</span>
+            <span class="variable">s</span> <span class="operator">=</span> <span class="variable">i</span><span class="delimiter">;</span>   <span class="comment">// OK：可以赋值给静态 enclose::s</span>
+            ::<span class="variable">x</span> <span class="operator">=</span> <span class="variable">i</span><span class="delimiter">;</span> <span class="comment">// OK：可以赋值给全局 x</span>
+            <span class="variable">y</span> <span class="operator">=</span> <span class="variable">i</span><span class="delimiter">;</span>   <span class="comment">// OK：可以赋值给全局 y</span>
+        }
+ 
+        <span class="type">void</span> <span class="function">g</span>(<span class="type">enclose</span><span class="operator">*</span> <span class="variable">p</span>, <span class="type">int</span> <span class="variable">i</span>)
+        {
+            <span class="variable">p</span><span class="operator">-&gt;</span><span class="property">x</span> <span class="operator">=</span> <span class="variable">i</span><span class="delimiter">;</span> <span class="comment">// OK：赋值给 enclose::x</span>
+        }
+    }<span class="delimiter">;</span>
+<span class="keyword">private</span>:
+    <span class="type">int</span> <span class="property">x</span><span class="delimiter">;</span>
+    <span class="keyword">static</span> <span class="type">int</span> <span class="property">s</span><span class="delimiter">;</span>
+}<span class="delimiter">;</span>
+</code></pre>
+<h3>?bind</h3><pre><code class="cpp"><span class="comment">// （ _1 与 _2 来自 std::placeholders ，并表示将来会传递给 f1 的参数）</span>
+<span class="type">auto</span> <span class="variable">f1</span> <span class="operator">=</span> <span class="type">std</span>::<span class="function">bind</span>(<span class="variable">f</span>, <span class="variable">_2</span>, <span class="number">42</span>, <span class="variable">_1</span>, <span class="type">std</span>::<span class="function">cref</span>(<span class="variable">n</span>), <span class="variable">n</span>)<span class="delimiter">;</span>
+</code></pre>
+<h3>?lambda ?λ</h3><pre><code class="cpp"><span class="type">int</span><span class="operator">&amp;</span> (<span class="operator">*</span><span class="variable">fpi</span>)(<span class="type">int</span><span class="operator">*</span>) <span class="operator">=</span> [](<span class="type">int</span><span class="operator">*</span> <span class="variable">a</span>) <span class="operator">-&gt;</span> <span class="type">int</span><span class="operator">&amp;</span> { <span class="keyword">return</span> <span class="operator">*</span><span class="variable">a</span><span class="delimiter">;</span> }<span class="delimiter">;</span>
+</code></pre>
+<h3>?继承 ?构造函数</h3><pre><code class="cpp"><span class="keyword">using</span> <span class="type">Base</span>::<span class="variable">Base</span><span class="delimiter">;</span>
+</code></pre>
+<h3>浏览器中设定cpp帮助文档 ?manpage</h3><ol><li>Chrome-设置-搜索引擎-管理搜索引擎和网站搜素-网站搜索-新增</li><li>Edge-设置-搜:地址栏和搜索-管理搜索引擎-添加</li></ol><pre><code>cc
+cc
+https://zh.cppreference.com/mwiki/index.php?title=Special:%E6%90%9C%E7%B4%A2&amp;search=%s
+</code></pre><h3>vscode c/cpp format settings</h3><ul><li>F1->Preferences: Open User Settings(json)</li><li>Ctrl+,->search formatting->C/C++ /Formatting->C_Cpp:Clang_format_style->{ BasedOnStyle: WebKit, IndentWidth: 2, TabWidth: 2}</li><li>Editor:Format On Paste</li></ul><h3>vscode Keyboard Shortcuts</h3><p>File->Preferences->Keyboard Shortcuts->cursorLineEnd->Ctrl+;</p><h3>log</h3><ol><li>同步日志:实时性好,便于记录异常崩溃日志;但写io阻塞当前业务</li><li>异步日志:业务线程生成日志信息,打印线程消费;</li></ol><h2>并发实战</h2><h3>基于atomic_flag的自旋锁</h3><pre><code class="cpp"><span class="keyword">class</span> <span class="type">spinlock_mutex</span>
+{
+ <span class="type">std</span>::<span class="type">atomic_flag</span> <span class="property">flag</span><span class="delimiter">;</span>
+<span class="keyword">public</span>:
+ <span class="function">spinlock_mutex</span>():
+ <span class="property">flag</span>(<span class="variable">ATOMIC_FLAG_INIT</span>)
+ {}
+ <span class="type">void</span> <span class="function">lock</span>()
+ {
+ <span class="keyword">while</span>(<span class="variable">flag</span><span class="delimiter">.</span><span class="function">test_and_set</span>(<span class="type">std</span>::<span class="variable">memory_order_acquire</span>))<span class="delimiter">;</span>
+ }
+ <span class="type">void</span> <span class="function">unlock</span>()
+ {
+ <span class="variable">flag</span><span class="delimiter">.</span><span class="function">clear</span>(<span class="type">std</span>::<span class="variable">memory_order_release</span>)<span class="delimiter">;</span>
+ }
+}<span class="delimiter">;</span>
+</code></pre>
+<h3>可上锁和等待的线程安全队列</h3><pre><code class="cpp"><span class="keyword">template</span><span class="operator">&lt;</span><span class="keyword">typename</span> <span class="type">T</span><span class="operator">&gt;</span>
+<span class="keyword">class</span> <span class="type">threadsafe_queue</span>
+{
+<span class="keyword">private</span>:
+ <span class="keyword">struct</span> <span class="type">node</span>
+ {
+ <span class="type">std</span>::<span class="type">shared_ptr</span><span class="operator">&lt;</span><span class="type">T</span><span class="operator">&gt;</span> <span class="property">data</span><span class="delimiter">;</span>
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="property">next</span><span class="delimiter">;</span>
+ }<span class="delimiter">;</span>
+ <span class="type">std</span>::<span class="type">mutex</span> <span class="property">head_mutex</span><span class="delimiter">;</span>
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="property">head</span><span class="delimiter">;</span>
+ <span class="type">std</span>::<span class="type">mutex</span> <span class="property">tail_mutex</span><span class="delimiter">;</span>
+ <span class="type">node</span><span class="operator">*</span> <span class="property">tail</span><span class="delimiter">;</span>
+ <span class="type">std</span>::<span class="type">condition_variable</span> <span class="property">data_cond</span><span class="delimiter">;</span>
+<span class="keyword">public</span>:
+ <span class="function">threadsafe_queue</span>():
+ <span class="property">head</span>(<span class="keyword">new</span> <span class="type">node</span>),<span class="property">tail</span>(<span class="variable">head</span><span class="delimiter">.</span><span class="function">get</span>())
+ {}
+ <span class="function">threadsafe_queue</span>(<span class="keyword">const</span> <span class="type">threadsafe_queue</span><span class="operator">&amp;</span> <span class="variable">other</span>)<span class="operator">=</span><span class="keyword">delete</span><span class="delimiter">;</span>
+ <span class="type">threadsafe_queue</span><span class="operator">&amp;</span> operator<span class="operator">=</span>(<span class="keyword">const</span> <span class="type">threadsafe_queue</span><span class="operator">&amp;</span> <span class="variable">other</span>)<span class="operator">=</span><span class="keyword">delete</span><span class="delimiter">;</span>
+ <span class="type">std</span>::<span class="type">shared_ptr</span><span class="operator">&lt;</span><span class="type">T</span><span class="operator">&gt;</span> <span class="function">try_pop</span>()<span class="delimiter">;</span>
+ <span class="type">bool</span> <span class="function">try_pop</span>(<span class="type">T</span><span class="operator">&amp;</span> <span class="variable">value</span>)<span class="delimiter">;</span>
+ <span class="type">std</span>::<span class="type">shared_ptr</span><span class="operator">&lt;</span><span class="type">T</span><span class="operator">&gt;</span> <span class="function">wait_and_pop</span>()<span class="delimiter">;</span>
+ <span class="type">void</span> <span class="function">wait_and_pop</span>(<span class="type">T</span><span class="operator">&amp;</span> <span class="variable">value</span>)<span class="delimiter">;</span>
+ <span class="type">void</span> <span class="function">push</span>(<span class="type">T</span> <span class="variable">new_value</span>)<span class="delimiter">;</span>
+ <span class="type">bool</span> <span class="function">empty</span>()<span class="delimiter">;</span>
+}<span class="delimiter">;</span>
+
+<span class="keyword">template</span><span class="operator">&lt;</span><span class="keyword">typename</span> <span class="type">T</span><span class="operator">&gt;</span>
+<span class="type">void</span> <span class="type">threadsafe_queue</span><span class="operator">&lt;</span><span class="type">T</span><span class="operator">&gt;</span>::<span class="function">push</span>(<span class="type">T</span> <span class="variable">new_value</span>)
+{
+ <span class="type">std</span>::<span class="type">shared_ptr</span><span class="operator">&lt;</span><span class="type">T</span><span class="operator">&gt;</span> <span class="function">new_data</span>(
+ <span class="type">std</span>::<span class="type">make_shared</span><span class="operator">&lt;</span><span class="type">T</span><span class="operator">&gt;</span>(<span class="type">std</span>::<span class="type">move</span>(<span class="type">new_value</span>)))<span class="delimiter">;</span>
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="variable">p</span>(<span class="keyword">new</span> <span class="type">node</span>)<span class="delimiter">;</span>
+ {
+ <span class="type">std</span>::<span class="type">lock_guard</span><span class="operator">&lt;</span><span class="type">std</span>::<span class="type">mutex</span><span class="operator">&gt;</span> <span class="function">tail_lock</span>(<span class="type">tail_mutex</span>)<span class="delimiter">;</span>
+ <span class="variable">tail</span><span class="operator">-&gt;</span><span class="property">data</span><span class="operator">=</span><span class="variable">new_data</span><span class="delimiter">;</span>
+ <span class="type">node</span><span class="operator">*</span> <span class="keyword">const</span> <span class="variable">new_tail</span><span class="operator">=</span><span class="variable">p</span><span class="delimiter">.</span><span class="function">get</span>()<span class="delimiter">;</span>
+ <span class="variable">tail</span><span class="operator">-&gt;</span><span class="property">next</span><span class="operator">=</span><span class="type">std</span>::<span class="function">move</span>(<span class="variable">p</span>)<span class="delimiter">;</span>
+ <span class="variable">tail</span><span class="operator">=</span><span class="variable">new_tail</span><span class="delimiter">;</span>
+ }
+ <span class="variable">data_cond</span><span class="delimiter">.</span><span class="function">notify_one</span>()<span class="delimiter">;</span>
+}
+
+<span class="keyword">template</span><span class="operator">&lt;</span><span class="keyword">typename</span> <span class="type">T</span><span class="operator">&gt;</span>
+<span class="keyword">class</span> <span class="type">threadsafe_queue</span>
+{
+<span class="keyword">private</span>:
+ <span class="type">node</span><span class="operator">*</span> <span class="function">get_tail</span>()
+ {
+ <span class="type">std</span>::<span class="type">lock_guard</span><span class="operator">&lt;</span><span class="type">std</span>::<span class="type">mutex</span><span class="operator">&gt;</span> <span class="function">tail_lock</span>(<span class="type">tail_mutex</span>)<span class="delimiter">;</span>
+ <span class="keyword">return</span> <span class="variable">tail</span><span class="delimiter">;</span>
+ }
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="function">pop_head</span>() <span class="comment">// 1</span>
+ {
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="variable">old_head</span><span class="operator">=</span><span class="type">std</span>::<span class="function">move</span>(<span class="variable">head</span>)<span class="delimiter">;</span>
+ <span class="variable">head</span><span class="operator">=</span><span class="type">std</span>::<span class="function">move</span>(<span class="variable">old_head</span><span class="operator">-&gt;</span><span class="property">next</span>)<span class="delimiter">;</span>
+ <span class="keyword">return</span> <span class="variable">old_head</span><span class="delimiter">;</span>
+ }
+ <span class="type">std</span>::<span class="type">unique_lock</span><span class="operator">&lt;</span><span class="type">std</span>::<span class="type">mutex</span><span class="operator">&gt;</span> <span class="function">wait_for_data</span>() <span class="comment">// 2</span>
+ {
+ <span class="type">std</span>::<span class="type">unique_lock</span><span class="operator">&lt;</span><span class="type">std</span>::<span class="type">mutex</span><span class="operator">&gt;</span> <span class="function">head_lock</span>(<span class="type">head_mutex</span>)<span class="delimiter">;</span>
+ <span class="variable">data_cond</span><span class="delimiter">.</span><span class="function">wait</span>(<span class="variable">head_lock</span>,[<span class="operator">&amp;</span>]{<span class="keyword">return</span> <span class="variable">head</span><span class="delimiter">.</span><span class="function">get</span>()<span class="operator">!=</span><span class="function">get_tail</span>()<span class="delimiter">;</span>})<span class="delimiter">;</span>
+ <span class="keyword">return</span> <span class="type">std</span>::<span class="function">move</span>(<span class="variable">head_lock</span>)<span class="delimiter">;</span> <span class="comment">// 3</span>
+ }
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="function">wait_pop_head</span>()
+ {
+ <span class="type">std</span>::<span class="type">unique_lock</span><span class="operator">&lt;</span><span class="type">std</span>::<span class="type">mutex</span><span class="operator">&gt;</span> <span class="function">head_lock</span>(<span class="type">wait_for_data</span>())<span class="delimiter">;</span> <span class="comment">// 4</span>
+ <span class="keyword">return</span> <span class="function">pop_head</span>()<span class="delimiter">;</span>
+ }
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="function">wait_pop_head</span>(<span class="type">T</span><span class="operator">&amp;</span> <span class="variable">value</span>)
+ {
+ <span class="type">std</span>::<span class="type">unique_lock</span><span class="operator">&lt;</span><span class="type">std</span>::<span class="type">mutex</span><span class="operator">&gt;</span> <span class="function">head_lock</span>(<span class="type">wait_for_data</span>())<span class="delimiter">;</span> <span class="comment">// 5</span>
+ <span class="variable">value</span><span class="operator">=</span><span class="type">std</span>::<span class="function">move</span>(<span class="operator">*</span><span class="variable">head</span><span class="operator">-&gt;</span><span class="property">data</span>)<span class="delimiter">;</span>
+ <span class="keyword">return</span> <span class="function">pop_head</span>()<span class="delimiter">;</span>
+ }
+<span class="keyword">public</span>:
+ <span class="type">std</span>::<span class="type">shared_ptr</span><span class="operator">&lt;</span><span class="type">T</span><span class="operator">&gt;</span> <span class="function">wait_and_pop</span>()
+ {
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="keyword">const</span> <span class="variable">old_head</span><span class="operator">=</span><span class="function">wait_pop_head</span>()<span class="delimiter">;</span>
+ <span class="keyword">return</span> <span class="variable">old_head</span><span class="operator">-&gt;</span><span class="property">data</span><span class="delimiter">;</span>
+ }
+ <span class="type">void</span> <span class="function">wait_and_pop</span>(<span class="type">T</span><span class="operator">&amp;</span> <span class="variable">value</span>)
+ {
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="keyword">const</span> <span class="variable">old_head</span><span class="operator">=</span><span class="function">wait_pop_head</span>(<span class="variable">value</span>)<span class="delimiter">;</span>
+ }
+}<span class="delimiter">;</span>
+
+<span class="keyword">template</span><span class="operator">&lt;</span><span class="keyword">typename</span> <span class="type">T</span><span class="operator">&gt;</span>
+<span class="keyword">class</span> <span class="type">threadsafe_queue</span>
+{
+<span class="keyword">private</span>:
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="function">try_pop_head</span>()
+ {
+ <span class="type">std</span>::<span class="type">lock_guard</span><span class="operator">&lt;</span><span class="type">std</span>::<span class="type">mutex</span><span class="operator">&gt;</span> <span class="function">head_lock</span>(<span class="type">head_mutex</span>)<span class="delimiter">;</span>
+ <span class="keyword">if</span>(<span class="variable">head</span><span class="delimiter">.</span><span class="function">get</span>()<span class="operator">==</span><span class="function">get_tail</span>())
+ {
+ <span class="keyword">return</span> <span class="type">std</span>::<span class="function">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span>()<span class="delimiter">;</span>
+ }
+ <span class="keyword">return</span> <span class="function">pop_head</span>()<span class="delimiter">;</span>
+ }
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="function">try_pop_head</span>(<span class="type">T</span><span class="operator">&amp;</span> <span class="variable">value</span>)
+ {
+ <span class="type">std</span>::<span class="type">lock_guard</span><span class="operator">&lt;</span><span class="type">std</span>::<span class="type">mutex</span><span class="operator">&gt;</span> <span class="function">head_lock</span>(<span class="type">head_mutex</span>)<span class="delimiter">;</span>
+ <span class="keyword">if</span>(<span class="variable">head</span><span class="delimiter">.</span><span class="function">get</span>()<span class="operator">==</span><span class="function">get_tail</span>())
+ {
+ <span class="keyword">return</span> <span class="type">std</span>::<span class="function">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span>()<span class="delimiter">;</span>
+ }
+ <span class="variable">value</span><span class="operator">=</span><span class="type">std</span>::<span class="function">move</span>(<span class="operator">*</span><span class="variable">head</span><span class="operator">-&gt;</span><span class="property">data</span>)<span class="delimiter">;</span>
+ <span class="keyword">return</span> <span class="function">pop_head</span>()<span class="delimiter">;</span>
+ }
+<span class="keyword">public</span>:
+ <span class="type">std</span>::<span class="type">shared_ptr</span><span class="operator">&lt;</span><span class="type">T</span><span class="operator">&gt;</span> <span class="function">try_pop</span>()
+ {
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="variable">old_head</span><span class="operator">=</span><span class="function">try_pop_head</span>()<span class="delimiter">;</span>
+ <span class="keyword">return</span> <span class="variable">old_head</span>?<span class="variable">old_head</span><span class="operator">-&gt;</span><span class="property">data</span>:<span class="type">std</span>::<span class="function">shared_ptr</span><span class="operator">&lt;</span><span class="type">T</span><span class="operator">&gt;</span>()<span class="delimiter">;</span>
+ }
+ <span class="type">bool</span> <span class="function">try_pop</span>(<span class="type">T</span><span class="operator">&amp;</span> <span class="variable">value</span>)
+ {
+ <span class="type">std</span>::<span class="type">unique_ptr</span><span class="operator">&lt;</span><span class="type">node</span><span class="operator">&gt;</span> <span class="keyword">const</span> <span class="variable">old_head</span><span class="operator">=</span><span class="function">try_pop_head</span>(<span class="variable">value</span>)<span class="delimiter">;</span>
+ <span class="keyword">return</span> <span class="variable">old_head</span><span class="delimiter">;</span>
+ }
+ <span class="type">bool</span> <span class="function">empty</span>()
+ {
+ <span class="type">std</span>::<span class="type">lock_guard</span><span class="operator">&lt;</span><span class="type">std</span>::<span class="type">mutex</span><span class="operator">&gt;</span> <span class="function">head_lock</span>(<span class="type">head_mutex</span>)<span class="delimiter">;</span>
+ <span class="keyword">return</span> (<span class="variable">head</span><span class="delimiter">.</span><span class="function">get</span>()<span class="operator">==</span><span class="function">get_tail</span>())<span class="delimiter">;</span>
+ }
+}<span class="delimiter">;</span>
+</code></pre>
+<h2>高级线程管理</h2><h3>线程池</h3></div>
+</body>
+</html>

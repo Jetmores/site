@@ -1,0 +1,22 @@
+---
+.title="用例",
+.date=@date("2024-11-22T00:00:00"),
+.author="let2rs",
+.layout="home.shtml",
+.draft=false,
+---
+>实践重点技术
+## SuperMD内联html的iframe元素
+```=html
+<!--
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=36964254&bvid=BV1rt411Q7io&cid=64999524&p=1" 
+scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+-->
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=36964254&bvid=BV1rt411Q7io&cid=64999524&p=1" 
+border="0" frameborder="no" framespacing="0" allowfullscreen="true" width=384 height=246></iframe>
+```
+
+## 外链获取动态json,解析json得当前站点静态数据
+占位(Zine目前尚未支持反向代理)
+
+[]($video.siteAsset('ShenJianXin.mp4').attrs("big").loop(false).controls(true).muted(true).pip(false).autoplay(false))

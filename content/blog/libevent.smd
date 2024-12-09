@@ -1,0 +1,11 @@
+---
+.title="libevent",
+.date=@date("2024-11-22T00:00:00"),
+.author="let2rs",
+.layout="home.shtml",
+.draft=false,
+---
+### 入门demo(好记性不如烂笔头)
+```cpp
+
+```

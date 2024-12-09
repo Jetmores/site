@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>Blogpage</h1>
+	<div id="content"><h3>start command</h3><pre><code class="bash"><span class="constant">!docker</span> <span class="constant">run</span> <span class="constant">--privileged</span> <span class="constant">--name</span> <span class="constant">nginx_</span> <span class="constant">-p</span> <span class="constant">5080:80</span> <span class="constant">-d</span> <span class="constant">nginx:alpine</span>
+<span class="constant">!docker</span> <span class="constant">exec</span> <span class="constant">-it</span> <span class="constant">nginx_</span> <span class="constant">/bin/sh</span>
+</code></pre>
+<p>浏览器:127.0.0.1:5080</p><h3>setting</h3><p>/etc/nginx/nginx.conf</p><pre><code>nginx -t
+nginx -s reload
+location = /app/index.html
+location ~ /app/vedio[6-9].avi
+~*:不区分大小写
+^~:优先前缀,默认空格是普通前缀
+
+//重定向
+location /temp {
+    return 307 /app/index.html;
+}
+或rewrite /temp /app/index.html;
+</code></pre><h3>博客挂载nginx :error not useful</h3><ol><li><a href="http://nginx.org/en/docs/beginners_guide.html" target="_blank">http://nginx.org/en/docs/beginners_guide.html</a></li><li>/key2demo</li><li>autoindex on;</li></ol></div>
+</body>
+</html>
