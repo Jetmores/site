@@ -16,7 +16,7 @@
 ## 操作系统
 - Linux通用
   1. [shell]($link.page('blog/bash'))
-  2. [POSIX系统API__]($link.page('blog/head'))
+  2. [POSIX系统API]($link.page('blog/posix'))
   3. [计算机网络与socket编程__]($link.page('blog/head'))
 - [Debian__]($link.page('blog/head'))
 - [FreeBSD__]($link.page('blog/head'))
