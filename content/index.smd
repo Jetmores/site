@@ -18,7 +18,7 @@
   1. [shell]($link.page('blog/bash'))
   2. [POSIX系统API]($link.page('blog/posix'))
   3. [计算机网络与socket编程__]($link.page('blog/head'))
-- [Debian__]($link.page('blog/head'))
+- [Debian]($link.page('blog/debian'))
 - [FreeBSD__]($link.page('blog/head'))
 
 ## 数据库
@@ -38,7 +38,7 @@
 
 ## 常用工具
 - [WireShark]($link.page('blog/net'))
-- [Makefile__]($link.page('blog/head'))
+- [Makefile]($link.page('blog/posix'))
 - [cmake__]($link.page('blog/head'))
 
 ## 其它语言
