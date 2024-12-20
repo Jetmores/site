@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>POSIX系统API</h1>
+	<div id="content"><h2>Unix体系结构</h2><p>内核->系统调用->库调用|shell命令->应用程序</p><h2>shell:一个命令行解释器</h2><ol><li>echo $SHELL</li><li>快捷键</li></ol><pre><code>Tab:自动补全
+Ctrl-p/Ctrl-n:历史命令上下遍历
+Ctrl-b/Ctrl-f:光标左右移
+Ctrl-a/Ctrl-e:移动到头或尾
+Ctrl-h/Ctrl-d:删除光标左右字符
+Ctrl-u/Ctrl-k:删除光标前后所有内容
+</code></pre><ol><li>常用命令</li></ol><pre><code># 绝对路径以:/开始的; 相对路径则相反,一般以./或../或直接目录名
+//whoami
+//pwd
+ls
+ls -a:包含.和..
+ls -al:以列表形式
+chmod [a|u|g|o] [+|-|=] [r|w|x], file: 如chmod u+w,o-w file
+chmod [+|-|=] 664 file :默认为=,如chmod 664 file 
+chown user[:group] file:修改文件用户和组
+//chgrp group file:修改组,被chown功能性可替代
+ln -s app app.soft:建立软链接,大小即名字占用字符7
+ln app app.hard:互为硬链接,同级关系,ls -li可查看是否同一个inode节点|stat file
+
+cd [~]:默认即是家目录
+cd -:来回切换上次目录
+//cp file file.bak|dir:拷贝文件到,新建文件|已存在目录之下
+//cp -r dir1 dir2:拷贝目录到,新建同级目录|已存在目录之下
+//cp -a:保留ls显示的属性不变的拷贝
+mv file file2|dir2:文件重命名或移动到已存在目录之下
+mv dir dir2:目录重命名或移动到已存在目录之下
+//tar -[z|j|J][c|x]vf xxx.tar.[gz|bz2|xz] [dir|-C dir]
+//which:定位命令地址
+//touch:创建文件或更新文件最后修改时间
+mkdir [-p] aa/bb cc :创建目录,带p连同不存在的父目录一起创建
+rmdir [-p] aa/bb/cc:删除空目录
+rm:删除文件
+rm -rf:删除目录,-f不提示
+
+cat file:查看小文件
+cat file1 &gt; file2 :类似cp file1 file2
+head -n[10]:查看前n行,默认10行
+tail -n[10]:查看后n行
+tail -f log:查看log
+less [-F]:类似tail -f logfile,与vi操作类似
+wc [-lwc] file:统计文件的行数,单词数,字节数
+
+
+find
+find . -name &apos;*.c&apos;
+find . -type f|d|l|b|c|p|s 
+find . -size +5M -size -10M:c,k,M,G 寻找(5,10)范围M的文件
+find . -[m|a|c][time|min] +2 -mtime -3 :2-3天之间的文件,time是天,min是分钟
+find temp -type f [-exec|-ok] rm -f {} \; :ok有确认操作,将find的结果作为shell命令的参数执行
+find temp -type f | xargs rm -f :应用管道,相比exec性能更好
+grep &quot;hello&quot; file
+grep -rin &quot;hello&quot; dir :r是搜索目录,i则忽略大小写,n显示行号
+find . -name &apos;*.sh&apos; | xargs grep -n &quot;hello&quot;
+sed -i -e &apos;s/deb.debian.org/mirrors.ustc.edu.cn/g&apos; -e &apos;s/2deb.debian.org/2mirrors.ustc.edu.cn/g&apos; /etc/apt/sources.list
+awk -F, &apos;{print $1 + $2, $3 $4}&apos; input.txt //实现1,2列相加;3,4列字符串拼接
+
+
+apt update|upgrade|full-upgrade:更新索引信息或升级包或全部升级包
+apt install
+apt remove|purge:purge会一同清除配置文件
+apt autoremove:卸载依赖软件包
+apt clean|autoclean
+//dpkg -i xxx.deb:离线安装
+//dpkg -r xxx.deb:卸载
+</code></pre><ol><li>helix</li></ol><pre><code>单字符移动:h,j,k,l
+插入模式:c,d,iI,aA,oO
+退出:wq!
+
+移动:wWbBeE
+选择:[n]x,v+[move]; 收缩选择:; 在选择头尾跳转:Alt+;
+多选:C,(nx|v+move)+s|S, 或e选择word之后*vn; 
+    多选光标跳转(),多选内容跳转Alt+(|)
+    收缩多选用, 剔除多选中某一个Alt-,
+跳转:Ctrl-s,Ctrl-i,Ctrl-o,gg|ge|gh|gl
+查找:/?nN, fFtT:Alt-.重复查字符
+替换:r[char],y,R
+复制粘贴:ypP,space-ypP:系统粘贴板
+寄存器:&quot;ay-&gt;&quot;aR
+宏:q[@]:默认播放@寄存器; q&quot;a; &quot;aQ-&gt;Q:Q录制和停止
+匹配模式:mm,mi,ma,ms,md,mr
+分屏:vs,hs/sp,Ctrl-w-[v|s|w|hH|jJ|kK|lL]; space-f+Ctrl-v|s
+</code></pre><ol><li>gcc</li></ol><pre><code>-DMAX[=100]: #define MAX=100
+-UMAX:#undef MAX
+gcc -E -o test.i test.c //预处理
+gcc -S -o test.s test.i //编译到汇编
+gcc -c -o test.o test.s //as汇编
+gcc -o test.out test.o //ld链接
+-g:gdb调试必备参数
+-O|-O1:-&gt;-Og
+-O2:-&gt;Os-&gt;Oz
+-O3:-&gt;Ofast
+-I -L -l :库相关
+//-static:全部使用静态库,不推荐
+-Wl,-Bstatic:此处之后的-l使用静态库
+-Wl,-Bdynamic:此处之后的-l使用动态库
+
+//静态库
+//gcc -c -o fun1.o fun1.c
+//gcc -c -o fun2.o fun2.c
+gcc -c fun1.c fun2.c
+ar rcs libfun.a fun1.o fun2.o //r更新 c创建 s建立索引
+-I. -L. -lfun //静态库使用同动态库相同,但优先动态库
+
+//动态库
+gcc -fPIC -c fun1.c fun2.c
+gcc -o libfun.so -shared fun1.o fun2.o
+//查看动态库加载
+ldd ./app
+echo &apos;export LD_LIBRARY_PATH=/mypath/:$LD_LIBRARY_PATH&apos; &gt;&gt;.bashrc ; . ~/.bashrc
+或者sudo echo &apos;mypath/&apos; &gt;&gt; /etc/ld.so.conf; sudo ldconfig //重建/etc/ld.so.cache
+</code></pre><ol><li>makefile:cmd之前设定多环境变量</li></ol><pre><code>target:VAR1
+target:VAR2
+target:VAR3
+target:
+    -rm x
+    ls -l
+</code></pre><p>通用Makefile</p><pre><code>target=app
+objects=$(patsubst %.c,%.o,$(wildcard *.c))
+
+CC=gcc
+CPPFLAGS=-I.
+
+$(target):$(objects)
+	$(CC) -o $@ $^
+
+%.o:%.c
+	$(CC) -c -g $(CPPFLAGS) $&lt;
+
+hi.s:hi.c
+	gcc -S -masm=intel -o hi.s hi.c
+
+.PHONY:clean
+clean:
+	rm -f $(target) $(objects)
+	rm -f hi.s
+</code></pre><ol><li>gdb</li></ol><pre><code>//启动(设置intel汇编disas)
+sudo echo &apos;set disassembly-flavor intel&apos; &gt;&gt;/etc/gdb/gdbinit
+gdb
+gdb app [core|pid]
+gdb -p pid
+gdb --args app arg1 arg2 //set args arg1 arg2 ;show args
+r[un]:直接运行到结束;start:启动后停在第一行
+attach pid
+detach
+
+exit
+quit,q
+Ctrl-d
+
+list,l [file.c:]n|function
+break,b [file.c:]n|function [if cond] //info b //del n //disable n //enable n
+next,n:下一步,不进入函数
+nexti,ni:下一步汇编指令
+//disas [&apos;hi.c&apos;::]add :反汇编hi.c下的add函数,注意有单引号
+step,s:单步进入函数
+step,si
+//set var x=1
+until,u [file.c:]n|function :单独的until,至少循环一遍后才生效(即两次until);其它情况类似c中的goto
+//jump n:非正常跳转,goto指定行,但不等待;需要结合一次性断点tbreak使用
+finish:正常结束函数
+//return ret:可以决定返回值,非正常跳转
+
+print,p var
+ptype var
+display var //info display //undisplay n //enable display n m //disable display n-m :每次stop都显示
+watch var :每次修改自动stop //info b//del n
+bt:栈帧信息 //up//down//frame,f n :栈帧切换 //info frame //info args //info locals
+
+core-file core.1234:加载core文件
+gcore core.1234:生成当前状态的core
+
+//多进程
+
+//多线程
+
+</code></pre><h2>系统io和标准io</h2><pre><code>open
+close
+read
+write
+dup2
+fcntl
+ioctl(fd,FIONREAD,&amp;len)
+
+//setvbuf
+//fflush
+fopen
+fclose
+fread
+fwrite
+fprintf/fscanf/fgets/fputs/fgetc/fputc/[un]getc/putc/getchar/putchar
+
+lstat已融入ls的shell命令
+opendir
+closedir
+readdir
+</code></pre><h3>关于慢速系统调用read/write等被信号打断是否重启问题(signal重启,sigaction自定SA_RESTARTED)</h3><ol><li>始终重启:来自musl源码</li></ol><pre><code>pthread_join
+pthread_mutex_timedlock
+pthread_connd_timedwait
+pthread_rwlock_timedrdlock
+pthread_rwlock_timedwrlock
+sem_timedwait
+</code></pre><h3>进程的虚拟地址空间</h3><p>.text(包含代码和字符串常量和全局常量)<br>.data(已初始化全局变量)<br>.bss(未初始化全局变量)<br>heap:从小到大<br>mmap映射的共享库<br>stack:从大到小<br>args命令行参数<br>env环境变量<br>3G-4G的内核区:用户不可读写,否则会出现段错误;负责进程管理,内存管理等</p><h2>多进程</h2><pre><code>并发:同一时间段内处理多个任务的能力
+并行:在同一时刻执行多个任务的能力
+父子共享:文件描述符表,mmap的MAP_SHARED的内存
+父子不共享:未决信号集,闹钟,记录锁
+fork
+execl:/usr/bin/ls,lsxxx,-l,&quot;NULL&quot;
+execlp:ls或者带路径或./a.out
+execle:带环境变量
+孤儿进程:父进程先死
+僵尸进程:自己死了,但父进程未回收,可以kill父进程,僵尸被init领养,立即被回收
+进程退出状态:main中return|exit|_Exit|_exit|最后线程return|pthread_exit 或
+异常终止:abort|信号终止(如abort,除0和段错误)
+wait(&amp;status)
+waitpid(pid|-1,&amp;status,0|NOHANG)
+system(const char* cmd):融合了fork,exec和waitpid;fork失败返回-1,exec失败127,其它返回shell终止状态
+
+守护进程:
+umask
+fork,父进程exit
+setsid创建新会话
+chdir
+close(fd)
+</code></pre><h2>进程间通信</h2><pre><code>管道:匿名的pipe和命名管道
+套接字:socket
+共享内存映射:mmap
+信号:开销最小
+
+pipe
+环形队列
+int pipe(int fd[2])
+int pipe2(intfd[2],O_NONBLOCK|O_DIRECT)
+读空等待,非阻塞读-1和EAGAIN,读0代表结尾和写端已关闭
+写满等待,非阻塞写-1和EAGAIN,写对端读关闭时产生SIGPIPE,处理(捕捉)之后返回-1同时EPIPE
+多端写单次要小于PIPE_BUF(4K),否则非原子,多端写入会混乱交叉
+O_DIRECT可以将小于PIPE_BUF的数据,以包的形式发送,读写只能读一个包或包的一部分(剩余丢弃)
+
+mkfifo(path,mode)
+在阻塞模式下,对fifo文件的open无论读写都会阻塞
+在O_NONBLOCK下,只读open立即成功返回,只写open返回-1同时ENXIO
+为避免服务端对公共fifo的读结尾(无客户端写打开公共fifo文件),可以用读写方式打开fifo,避免读0结尾
+
+有血缘用匿名映射,无血缘用文件(有血缘也可)
+mmap(0,len,PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_SHARED,-1,0)
+mmap(0,len,PROT_READ|PROT_WRITE,MAP_SHARED,fd,0)
+if(addr==MAP_FAILED){perror}
+munmap(addr,len)
+
+
+信号:软中断
+信号处理:对应注册的handler=SIG_DFL/SIG_IGN/pfunc
+01执行默认动作(term,core,stop,cont,ign):Ctrl-c,Ctrl-\,Ctrl-z,SIGCONT,SIGCHLD
+02忽略信号
+03捕捉信号:用户主动
+
+信号注册:
+SIG_ERR=signal(sig,handler)
+int sigaction(int signum,const struct sigaction *act,struct sigaction *oldact);
+捕捉函数执行期间,自动屏蔽当前信号;
+act.sa_flags|=SA_RESTART;是典型的替代signal操作,支持中断慢速系统调用的重启;
+信号排队支持:act.sa_flags|=SA_SIGINFO;使用sa_sigaction形式的回调函数替换sa_handler;使用sigqueue可发送信号同时额外发送int或void*;
+信号发送:
+kill(pid,sig):给指定进程发送信号//sigqueue排队发信号同时带额外信息//pthead_kill(tid,signo)
+//raise(sig)==kill(getpid(),sig)
+//abort(SIGABRT)==kill(getpid(),SIGABRT)
+alarm(secs):secs秒后发送SIGALRM,默认term;alarm(0)取消定时器; 每个进程有且只有一个定时器;使用自然定时法(即使挂起也计时),与进程状态挂起等无关
+setitimer(ITIMER_REAL,new,old)
+struct itimerval{
+    it_interval,//周期间隔
+    it_val //初次触发
+}
+
+阻塞信号集:阻塞信号,使信号保持未决
+未决信号集:未处理的信号
+sigemptyset(sigset_t *set),sigfillset(set)
+sigaddset(set,signo),sigdelset(set,signo)
+sigismember(set,signo)
+sigprocmask(SIG_BLOCK/SIG_UNBLOCK/SIG_SETMASK,set,oset) //pthread_sigmask
+sigpending(sigset_t *set):未决信号集
+sigsuspend(mask):pause的过滤版,仅随信号处理函数一同返回; //线程中类似的是sigwait(pset,psigno),但pset是要等待的信号非屏蔽字
+
+信号与子进程pcb回收:
+do while ret&gt;0 ret=waitpid(-1,NULL,WNOHANG)
+
+//信号与多线程
+pthread_kill
+pthread_sigmask
+sigwait:需要首先pthread_sigmask,才可用同样的set来wait
+</code></pre><h2>多线程</h2><pre><code>//pthread_self()
+//pthread_equal
+pthread_create
+pthread_exit //return
+pthread_cancel
+//pthread_cleanup_push
+//pthread_cleanup_pop
+pthread_join
+pthread_detach
+
+
+</code></pre><h2>线程间同步</h2><pre><code>pthread_mutex_init
+destory
+lock
+unlock
+trylock
+timedlock
+
+pthread_rwlock_init
+destory
+rdlock
+wrlock
+unlock
+tryrdlock
+trywrlock
+timedrdlock
+timedwrlock
+
+pthread_cond_init
+destory
+wait
+timedwait
+signal
+broadcast
+
+pthread_spin_init
+destory
+lock
+unlock
+trylock
+
+pthread_barrier_init
+destory
+wait
+
+sem_init
+destory
+wait
+trywait
+timedwait
+post
+</code></pre><h2>线程属性</h2><pre><code>pthread_setcancelstate(PTHREAD_CANCEL_ENABLE,NULL)
+pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS,NULL)
+pthread_testcancel()
+
+pthread_key_create(&amp;key,free)
+//pthread_key_delete//暂无用
+pthread_once//保证多个线程仅初始化一次key_create
+pthread_getspecific
+pthread_setspecific//设定一个malloc地址与key关联
+</code></pre></div>
+</body>
+</html>
