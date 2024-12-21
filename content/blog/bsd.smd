@@ -1,0 +1,33 @@
+---
+.title="FreeBSD",
+.date=@date("2024-11-22T00:00:00"),
+.author="let2rs",
+.layout="home.shtml",
+.draft=false,
+---
+### FreeBSD rc.conf
+```sh
+# network
+ifconfig_em0="inet 192.168.3.3 netmask 255.255.255.0"
+defaultrouter="192.168.3.1"
+
+# service
+sshd_enable="YES"
+sendmail_enable="NO"
+sendmail_submit_enable="NO"
+sendmail_outbound_enable="NO"
+sendmail_msp_queue_enable="NO"
+```
+
+### 添加硬盘
+```sh
+gpart create -s GPT ada0
+gpart add -t freebsd-ufs -a 1M ada0
+
+gpart show ada0
+
+newfs -U /dev/ada0p1
+
+#edit /etc/fstab;reboot
+/dev/ada0p1 /data ufs rw 2 2
+```

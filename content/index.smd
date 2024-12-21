@@ -17,9 +17,9 @@
 - Linux通用
   1. [shell]($link.page('blog/bash'))
   2. [POSIX系统API]($link.page('blog/posix'))
-  3. [计算机网络与socket编程__]($link.page('blog/head'))
+  3. [计算机网络与socket编程]($link.page('blog/socket'))
 - [Debian]($link.page('blog/debian'))
-- [FreeBSD__]($link.page('blog/head'))
+- [FreeBSD]($link.page('blog/bsd'))
 
 ## 数据库
 - [mysql]($link.page('blog/mysql'))
@@ -39,7 +39,7 @@
 ## 常用工具
 - [WireShark]($link.page('blog/net'))
 - [Makefile]($link.page('blog/posix'))
-- [cmake__]($link.page('blog/head'))
+- [cmake]($link.page('blog/cmake'))
 
 ## 其它语言
 - [asm]($link.page('blog/asm'))

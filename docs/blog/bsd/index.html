@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+	<meta charset="UTF-8">
+	<title id="title">YuHeng&apos;s blog! - Zine</title>
+	<link href="/style.css" rel="stylesheet">
+  </head>
+<body>
+	<nav id="menu" class="centered">
+		<a href="/">主页</a>
+		<a href="/blog/">日志</a>
+		<a href="/sample/">用例</a>
+	</nav>
+	<h1>FreeBSD</h1>
+	<div id="content"><h3>FreeBSD rc.conf</h3><pre><code class="sh"># network
+ifconfig_em0=&quot;inet 192.168.3.3 netmask 255.255.255.0&quot;
+defaultrouter=&quot;192.168.3.1&quot;
+
+# service
+sshd_enable=&quot;YES&quot;
+sendmail_enable=&quot;NO&quot;
+sendmail_submit_enable=&quot;NO&quot;
+sendmail_outbound_enable=&quot;NO&quot;
+sendmail_msp_queue_enable=&quot;NO&quot;
+</code></pre>
+<h3>添加硬盘</h3><pre><code class="sh">gpart create -s GPT ada0
+gpart add -t freebsd-ufs -a 1M ada0
+
+gpart show ada0
+
+newfs -U /dev/ada0p1
+
+#edit /etc/fstab;reboot
+/dev/ada0p1 /data ufs rw 2 2
+</code></pre>
+</div>
+</body>
+</html>
