@@ -17,6 +17,7 @@
 ```
 nginx -t
 nginx -s reload
+//sudo service nginx restart
 location = /app/index.html
 location ~ /app/vedio[6-9].avi
 ~*:不区分大小写
