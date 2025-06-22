@@ -1,7 +1,7 @@
 Site {
    .title = "YuHeng's blog!",
    .host_url = "https://jetmores.github.io",
-   .url_path_prefix = "site",
+   .url_path_prefix = "site",// need to comment when use for nginx
    .content_dir_path = "content",
    .layouts_dir_path = "layouts",
    .assets_dir_path = "assets",
