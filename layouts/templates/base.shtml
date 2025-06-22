@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head id="head">
-	<meta charset="UTF-8">
-	<title id="title"><super> - Zine</title>
-	<link href="$site.asset('style.css').link()" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title id="title"><super>
+      - Zine</title>
+    <link href="$site.asset('style.css').link()" rel="stylesheet">
   </head>
-<body>
-	<nav id="menu" class="centered">
-		<a href="/">主页</a>
-		<a href="$site.page('blog').link()">日志</a>
-		<a href="$site.page('sample').link()">用例</a>
-	</nav>
-	<h1 :text="$page.title"></h1>
-	<div id="content"><super></div>
-</body>
+  <body>
+    <nav id="menu" class="centered">
+      <a href="$site.link()">主页</a>
+      <a href="$site.page('blog').link()">日志</a>
+      <a href="$site.page('sample').link()">用例</a>
+    </nav>
+    <h1 :text="$page.title"></h1>
+    <div id="content"><super></div>
+  </body>
 </html>
