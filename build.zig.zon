@@ -4,8 +4,8 @@
     .fingerprint = 0x11ee949c6f7d877c,
     .dependencies = .{
         .zine = .{
-            .url = "git+https://github.com/kristoff-it/zine.git?ref=main#ff0b7b1222fe6529fc36e876a71a99379ad761c4",
-            .hash = "zine-0.9.0-ou6nIEJTFgDwdlQnB6NtTnZneWKgg-qoVPaXyU2PjWF2",
+            .url = "git+https://github.com/kristoff-it/zine.git?ref=main#03734aa552eba662db4d4d166a4220b132b302f9",
+            .hash = "zine-0.11.2-ou6nIDd6FgAQCo8y1pypWVcGxfH91Vlqdspeop3Hjrwj",
         },
     },
     .paths = .{"."},
