@@ -1,0 +1,25 @@
+---
+.title="wezterm",
+.date=@date("2024-11-22T00:00:00"),
+.author="let2rs",
+.layout="home.shtml",
+.draft=false,
+---
+## wezterm快捷键(~/.wezterm.lua)
+### 标签管理
+- `Ctrl+Shift+T` 打开新标签
+- `Ctrl+Shift+W` 关闭当前标签
+- `Ctrl+Shift+[1-9]` 切换到指定编号的标签
+- `Ctrl+Tab` 切换到下一个标签，可循环切换
+ 
+### 会话管理
+- `Ctrl+Shift+P` 打开命令面板
+ 
+### 文本操作
+- `Ctrl+Shift+C` 复制选中文本
+- `Ctrl+Shift+V` 粘贴文本
+- `Ctrl+Shift+F` 搜索文本
+ 
+### 其他操作
+- `Ctrl+Shift+Space` 激活复制模式
+- `Ctrl+Shift+R` 重新加载配置

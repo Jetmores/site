@@ -40,6 +40,7 @@
 - [WireShark]($link.page('blog/net'))
 - [Makefile]($link.page('blog/posix'))
 - [cmake]($link.page('blog/cmake'))
+- [wezterm]($link.page('blog/wezterm'))
 
 ## 其它语言
 - [asm]($link.page('blog/asm'))
